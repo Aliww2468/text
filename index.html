@@ -181,7 +181,7 @@ nav{
 .sec-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--blue-bright);white-space:nowrap;}
 
 /* Card grid */
-.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);}
+.card-grid-wrap{overflow:visible;}.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);width:auto;}
 .card{
   background:var(--bg2);padding:0;
   display:flex;flex-direction:column;overflow:hidden;
@@ -272,17 +272,23 @@ footer{
 
   /* ── MOBILE ── */
   @media(max-width:768px){
+    /* Hide ship placeholder on mobile */
+    .hero-ship-placeholder{display:none;}
+    .hero-ship{height:40%;opacity:0.25;}
+
     /* Nav */
     nav{padding:0 1rem;gap:1rem;}
     .nav-links{display:none;}
     .nav-right{gap:0.5rem;}
     .nav-icon{display:none;}
+    .nav-status-item{display:flex;font-size:10px;}
+    .nav-right{margin-left:auto;}
     .nav-cta{font-size:12px;padding:7px 14px;}
 
     /* Hero */
-    .hero{height:auto;min-height:100svh;}
-    .hero-ship{width:100%;right:0;top:0;height:55%;opacity:0.4;}
-    .hero-content{padding:0 1.25rem 14rem;max-width:100%;justify-content:flex-end;}
+    .hero{height:auto;min-height:auto;}
+    .hero-ship{display:none;}
+    .hero-content{padding:clamp(1.5rem,8svh,4rem) 1.25rem 1.5rem;max-width:100%;justify-content:flex-start;}
     .hero-tag{font-size:10px;}
     .hero-title{font-size:clamp(32px,10vw,52px);}
     .hero-subtitle{font-size:14px;}
@@ -304,8 +310,18 @@ footer{
     /* Sections */
     .section{padding:3rem 1.25rem;}
 
-    /* Card grid */
-    .card-grid{grid-template-columns:1fr;gap:0;}
+    /* Card grid — horizontal scroll on mobile */
+    .card-grid-wrap{position:relative;height:480px;overflow:hidden;}
+    .card-grid{display:block;width:100%;background:transparent;gap:0;}
+    .card{
+      position:absolute;width:82%;left:50%;
+      transform:translateX(-50%);
+      border-radius:4px;
+      transition:transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94),opacity 0.4s;
+      cursor:grab;user-select:none;touch-action:pan-y;
+    }
+    .card:active{cursor:grabbing;}
+    .card{width:75vw;}
 
     /* About grid */
     .about-grid{grid-template-columns:1fr;}
@@ -344,8 +360,8 @@ footer{
     <a>网站</a>
   </div>
   <div class="nav-right">
-    <span class="nav-icon">⚙ 版本 4.7.2</span>
-    <span class="nav-icon">● 服务器正常</span>
+    <span class="nav-icon nav-status-item">⚙ 版本 4.7.2</span>
+    <span class="nav-icon nav-status-item">● 服务器正常</span>
     <a class="nav-cta">立即加入</a>
   </div>
 </nav>
@@ -364,7 +380,6 @@ footer{
     <div class="hero-tag">STAR CITIZEN · 华夏舰队</div>
     <div class="hero-title">华夏舰队</div>
     <div class="hero-subtitle">龙旗招展，星海为盟</div>
-    <a class="hero-btn"><span class="hero-btn-arrow">›</span> 申请加入</a>
   </div>
   <div class="hero-thumbs">
     <div class="thumb-nav">‹</div>
@@ -401,6 +416,7 @@ footer{
 <div class="section-full">
   <div class="section">
     <div class="sec-hd"><div class="sec-line"></div><div class="sec-label">组织动态</div><div class="sec-line"></div></div>
+    <div class="card-grid-wrap">
     <div class="card-grid">
       <div class="card">
         <div class="card-img">📋</div>
@@ -507,5 +523,86 @@ footer{
   </div>
 </footer>
 
+
+<script>
+(function(){
+  if(window.innerWidth > 768) return;
+
+  const wrap = document.querySelector('.card-grid-wrap');
+  if(!wrap) return;
+  const cards = [...document.querySelectorAll('.card')];
+  const N = cards.length;
+  let current = 0, dragX = 0, isDragging = false, startX = 0;
+
+  function layout(animated){
+    cards.forEach((c, i) => {
+      const rel = (i - current + N) % N;
+      let tx, sc, op, zi, rot;
+      if(rel === 0){
+        tx = dragX; sc = 1; op = 1; zi = 10; rot = dragX * 0.03;
+      } else if(rel === 1){
+        tx = 58 - dragX * 0.12; sc = 0.88; op = 0.55; zi = 6; rot = 0;
+      } else if(rel === N - 1){
+        tx = -58 - dragX * 0.12; sc = 0.88; op = 0.55; zi = 6; rot = 0;
+      } else {
+        tx = 0; sc = 0.76; op = 0; zi = 1; rot = 0;
+      }
+      c.style.transition = animated
+        ? 'transform 0.38s cubic-bezier(0.25,0.46,0.45,0.94),opacity 0.32s'
+        : 'none';
+      c.style.transform = `translateX(calc(-50% + ${tx}px)) scale(${sc}) rotate(${rot}deg)`;
+      c.style.opacity = op;
+      c.style.zIndex = zi;
+      c.style.top = rel === 0 ? '16px' : '36px';
+    });
+    updateDots();
+  }
+
+  // Dot indicators
+  const dotsEl = document.createElement('div');
+  dotsEl.style.cssText = 'position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:7px;z-index:20;pointer-events:none;';
+  cards.forEach((_,i)=>{
+    const d = document.createElement('div');
+    d.style.cssText = 'width:6px;height:6px;border-radius:50%;transition:background 0.3s;';
+    dotsEl.appendChild(d);
+  });
+  wrap.appendChild(dotsEl);
+
+  function updateDots(){
+    [...dotsEl.children].forEach((d,i)=>{
+      d.style.background = i===current ? 'var(--blue-btn)' : 'rgba(255,255,255,0.25)';
+    });
+  }
+
+  function onStart(e){
+    isDragging = true;
+    startX = e.touches ? e.touches[0].clientX : e.clientX;
+    dragX = 0;
+  }
+  function onMove(e){
+    if(!isDragging) return;
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
+    dragX = x - startX;
+    layout(false);
+  }
+  function onEnd(){
+    if(!isDragging) return;
+    isDragging = false;
+    if(dragX < -55) current = (current + 1) % N;
+    else if(dragX > 55) current = (current - 1 + N) % N;
+    dragX = 0;
+    layout(true);
+  }
+
+  wrap.addEventListener('touchstart', onStart, {passive:true});
+  wrap.addEventListener('touchmove',  onMove,  {passive:true});
+  wrap.addEventListener('touchend',   onEnd);
+  wrap.addEventListener('mousedown',  onStart);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup',   onEnd);
+
+  layout(false);
+})();
+</script>
 </body>
 </html>

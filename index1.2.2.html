@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Star Citizen Org · 11111111</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --gold:#c8a96e;--gold-dim:#8a6e3f;--cyan:#4dd9f5;--cyan-dim:#1a8fa8;
+    --red:#e84040;--green:#3de83d;
+    --bg-dark:#080c10;--bg-panel:#0d1520;--bg-card:#111c2a;
+    --border:rgba(77,217,245,0.2);--border-gold:rgba(200,169,110,0.3);
+    --text:#c5d8e8;--text-dim:#5a7a8a;
+  }
+  body{font-family:'Rajdhani',sans-serif;background:var(--bg-dark);color:var(--text);min-height:100vh;overflow-x:hidden;display:flex;flex-direction:column;}
+
+
+  @keyframes spin{to{transform:rotate(360deg);}}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+  @keyframes fadein{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+  @keyframes mainFadeIn{from{opacity:0;}to{opacity:1;}}
+  .main-fade{animation:mainFadeIn 0.8s ease forwards;}
+  @keyframes fadeInUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:none;}}
+  .fade-in{opacity:0;animation:fadeInUp 0.8s ease forwards;width:100%;text-align:center;}
+  @keyframes scanline{0%{top:-10%;}100%{top:110%;}}
+
+  /* Loading */
+  .loading-screen{position:fixed;inset:0;z-index:500;background:var(--bg-dark);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;transition:opacity 0.5s;}
+  .loading-screen.out{opacity:0;pointer-events:none;}
+  .load-ring{width:56px;height:56px;border:2px solid var(--border);border-top-color:var(--cyan);border-radius:50%;animation:spin 0.9s linear infinite;}
+  .load-tag{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:4px;color:var(--cyan-dim);}
+  .load-sid{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;color:var(--cyan);}
+  .load-sub{font-size:12px;color:var(--text-dim);letter-spacing:1px;}
+
+  /* Error */
+  .fatal{position:fixed;inset:0;z-index:500;background:var(--bg-dark);display:none;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center;}
+  .fatal-title{font-family:'Orbitron',monospace;font-size:14px;color:var(--red);letter-spacing:3px;}
+  .fatal-msg{font-size:13px;color:var(--text-dim);line-height:1.8;max-width:420px;}
+  .fatal-link{color:var(--cyan);font-size:12px;}
+
+  /* Nav */
+  nav{position:sticky;top:0;z-index:100;background:rgba(8,12,16,0.96);border-bottom:1px solid var(--border);padding:0 2rem;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:58px;backdrop-filter:blur(8px);}
+  .nav-logo{font-family:'Orbitron',monospace;font-size:13px;font-weight:900;letter-spacing:3px;color:var(--cyan);white-space:nowrap;max-width:240px;overflow:hidden;text-overflow:ellipsis;}
+  .nav-logo em{color:var(--gold);font-style:normal;}
+  .nav-links{display:flex;gap:1.75rem;justify-content:center;}
+  .nav-links a{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;cursor:pointer;transition:color 0.2s;padding-bottom:3px;border-bottom:1px solid transparent;}
+  .nav-links a:hover,.nav-links a.active{color:var(--cyan);border-bottom-color:var(--cyan);}
+  .nav-status{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--green);letter-spacing:1px;}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+
+  /* Page system */
+  nav{flex-shrink:0;}
+  footer{flex-shrink:0;margin-top:auto;}
+  .page{display:none;animation:fadein 0.35s ease;}
+  .page.active{display:block;flex:1;}
+
+  /* Home page — flex column so stats bar sinks to bottom */
+  #home{display:none;flex-direction:column;}
+  #home.active{display:flex;flex:1;}
+  #home .hero{flex:1;display:flex;flex-direction:column;justify-content:flex-start;}
+  /* Non-home pages fill remaining viewport height */
+  #org.active,#members.active,#join.active{display:block;min-height:100%;}
+  #org .section,#members .section,#join .section{min-height:inherit;}
+
+  /* Hero */
+  .hero{position:relative;z-index:1;padding:1.25rem 2rem 3rem;text-align:center;overflow:hidden;}
+  .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% -10%,rgba(77,217,245,0.06) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 80% 60%,rgba(200,169,110,0.03) 0%,transparent 60%);pointer-events:none;}
+  .hero-tag{display:inline-block;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--cyan-dim);border:1px solid var(--border);padding:3px 14px;margin-bottom:1.5rem;}
+  .hero-logo{width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--border-gold);margin:0 auto 1.1rem;display:block;box-shadow:0 0 24px rgba(200,169,110,0.15);}
+  .hero-logo-ph{width:80px;height:80px;border-radius:50%;border:2px solid var(--border-gold);margin:0 auto 1.1rem;display:flex;align-items:center;justify-content:center;background:rgba(200,169,110,0.07);font-family:'Orbitron',monospace;font-size:22px;font-weight:700;color:var(--gold);}
+  .hero-title{font-family:'Orbitron',monospace;font-size:clamp(22px,5vw,46px);font-weight:900;color:#e8f4ff;margin-bottom:4px;line-height:1.1;}
+  .hero-sid{font-size:10px;letter-spacing:6px;text-transform:uppercase;color:var(--cyan);margin-bottom:0.6rem;}
+  .hero-divider{width:100px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0.8rem auto 1.1rem;}
+  .hero-desc{max-width:560px;margin:0 auto 2rem;font-size:14px;line-height:1.9;color:var(--text-dim);}
+  .hero-btns{display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;}
+  .btn{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:10px 24px;border:1px solid;cursor:pointer;transition:all 0.25s;text-decoration:none;display:inline-block;}
+  .btn-primary{background:var(--cyan);border-color:var(--cyan);color:#000;font-weight:700;}
+  .btn-primary:hover{background:transparent;color:var(--cyan);}
+  .btn-ghost{background:transparent;border-color:var(--gold-dim);color:var(--gold);}
+  .btn-ghost:hover{border-color:var(--gold);background:rgba(200,169,110,0.07);}
+
+  /* Stats bar */
+  .stats-bar{position:relative;z-index:1;background:var(--bg-panel);border-top:1px solid var(--border);border-bottom:1px solid var(--border);display:flex;justify-content:center;flex-wrap:wrap;}
+  .stat-item{padding:1.1rem 2rem;text-align:center;border-right:1px solid var(--border);}
+  .stat-item:last-child{border-right:none;}
+  .stat-num{font-family:'Orbitron',monospace;font-size:22px;font-weight:700;color:var(--cyan);display:block;}
+  .stat-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:3px;display:block;}
+
+  /* Section */
+  .section{position:relative;z-index:1;padding:3rem 2rem;max-width:1100px;margin:0 auto;}
+  .sec-hd{display:flex;align-items:center;gap:1rem;margin-bottom:2rem;}
+  .sec-line{flex:1;height:1px;background:var(--border);}
+  .sec-title{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);white-space:nowrap;}
+
+  /* Org info */
+  .info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem;margin-bottom:1.25rem;}
+  .info-card{background:var(--bg-card);border:1px solid var(--border);padding:1rem 1.25rem;transition:border-color 0.2s;}
+  .info-card:hover{border-color:rgba(77,217,245,0.3);}
+  .info-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:5px;}
+  .info-val{font-size:14px;font-weight:600;color:#e8f4ff;}
+  .info-val.cyan{color:var(--cyan);}
+  .info-val.gold{color:var(--gold);}
+  .info-val.green{color:var(--green);}
+  .info-val.red{color:var(--red);}
+  .headline-box{background:var(--bg-card);border:1px solid var(--border);padding:1.5rem;font-size:13px;line-height:1.9;color:var(--text-dim);}
+  .org-banner{width:100%;max-height:200px;object-fit:cover;border-bottom:1px solid var(--border);display:block;}
+
+  /* Members */
+  .member-grid{display:grid !important;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:0.75rem;}
+  .member-card{background:var(--bg-card);border:1px solid var(--border);padding:1.1rem;text-align:center;transition:border-color 0.2s;}
+  .member-card:hover{border-color:rgba(77,217,245,0.35);}
+  .m-avatar{width:50px;height:50px;border-radius:50%;object-fit:cover;border:1px solid var(--border);margin:0 auto 0.65rem;display:block;}
+  .m-avatar-ph{width:50px;height:50px;border-radius:50%;border:1px solid var(--border);background:rgba(77,217,245,0.07);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:14px;color:var(--cyan);margin:0 auto 0.65rem;}
+  .m-handle{font-family:'Orbitron',monospace;font-size:10px;font-weight:700;color:#e8f4ff;margin-bottom:3px;}
+  .m-rank{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:5px;}
+  .m-stars{display:flex;justify-content:center;gap:2px;margin-bottom:5px;}
+  .m-star{width:7px;height:7px;background:var(--gold);clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);}
+  .m-star.dim{background:var(--text-dim);opacity:0.2;}
+  .m-roles{display:flex;flex-wrap:wrap;justify-content:center;gap:3px;margin-top:5px;}
+  .m-role{font-size:8px;letter-spacing:1px;padding:2px 5px;border:1px solid var(--border-gold);color:var(--gold-dim);text-transform:uppercase;}
+
+
+  /* Filter toolbar */
+  .filter-bar{display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;margin-bottom:1.25rem;}
+  .filter-input{background:rgba(77,217,245,0.04);border:1px solid var(--border);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px;padding:7px 12px;outline:none;flex:1;min-width:160px;}
+  .filter-input:focus{border-color:var(--cyan);}
+  .filter-input::placeholder{color:var(--text-dim);}
+  .filter-select{background:var(--bg-card);border:1px solid var(--border);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px;padding:7px 10px;outline:none;cursor:pointer;}
+  .filter-select:focus{border-color:var(--cyan);}
+  .filter-select option{background:var(--bg-card);}
+  .filter-count{font-size:11px;color:var(--text-dim);letter-spacing:1px;white-space:nowrap;margin-left:auto;}
+
+
+  .website-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem;}
+  .website-card{display:flex;flex-direction:column;align-items:center;text-align:center;background:var(--bg-card);border:1px solid var(--border);padding:1.75rem 1.25rem 1.5rem;text-decoration:none;transition:border-color 0.2s,background 0.2s;cursor:pointer;position:relative;}
+  .website-card::before,.website-card::after{content:'';position:absolute;width:12px;height:12px;border-color:var(--gold-dim);border-style:solid;opacity:0.35;}
+  .website-card::before{top:6px;left:6px;border-width:1px 0 0 1px;}
+  .website-card::after{bottom:6px;right:6px;border-width:0 1px 1px 0;}
+  .website-card:hover{border-color:rgba(77,217,245,0.4);background:rgba(77,217,245,0.03);}
+  .website-card:hover .website-arrow{color:var(--cyan);}
+  .website-icon{width:72px;height:72px;border-radius:6px;background:var(--bg-panel);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:24px;margin-bottom:1rem;overflow:hidden;}
+  .website-icon img{width:100%;height:100%;object-fit:cover;}
+  .website-info{flex:1;width:100%;}
+  .website-name{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;color:#e8f4ff;margin-bottom:6px;}
+  .website-desc{font-size:11px;color:var(--text-dim);line-height:1.6;margin-bottom:8px;}
+  .website-url{font-size:9px;letter-spacing:1px;color:var(--cyan-dim);}
+  .website-arrow{font-size:14px;color:var(--border);transition:color 0.2s;margin-top:0.75rem;}
+  /* Typewriter */
+  /* Parallax banner */
+  .parallax-wrap{overflow:hidden;position:relative;max-height:200px;border-bottom:1px solid var(--border);}
+  .parallax-img{width:100%;height:260px;object-fit:cover;display:block;will-change:transform;transition:transform 0.1s linear;}
+
+  /* Announcements */
+  .announce-wrap{width:100%;max-width:600px;margin:1.75rem auto 0;text-align:left;}
+  .announce-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;}
+  .announce-title{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);}
+  .announce-count{font-size:10px;color:var(--text-dim);letter-spacing:1px;}
+  .announce-card{background:var(--bg-card);border:1px solid var(--border);padding:1rem 1.25rem;margin-bottom:0.5rem;transition:border-color 0.2s;cursor:pointer;position:relative;overflow:hidden;}
+  .announce-card:hover{border-color:rgba(77,217,245,0.3);}
+  .announce-card-top{display:flex;align-items:center;justify-content:space-between;gap:0.75rem;margin-bottom:0.4rem;}
+  .announce-card-title{font-size:13px;font-weight:600;color:#e8f4ff;}
+  .announce-card-date{font-size:10px;color:var(--text-dim);letter-spacing:1px;white-space:nowrap;}
+  .announce-card-body{font-size:12px;color:var(--text-dim);line-height:1.7;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .announce-card-body.expanded{display:block;-webkit-line-clamp:unset;}
+  .announce-label{display:inline-block;font-size:9px;letter-spacing:1px;padding:2px 7px;border:1px solid var(--border-gold);color:var(--gold-dim);text-transform:uppercase;margin-bottom:0.5rem;}
+  .announce-empty{font-size:12px;color:var(--text-dim);text-align:center;padding:1rem;border:1px dashed var(--border);}
+  .announce-spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--cyan);border-radius:50%;animation:spin 0.8s linear infinite;margin:1rem auto;}
+
+  /* Hamburger menu */
+  .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;z-index:200;}
+  .hamburger span{display:block;width:22px;height:2px;background:var(--text);transition:all 0.3s ease;}
+  .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  .hamburger.open span:nth-child(2){opacity:0;}
+  .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+  .mobile-menu{display:none;position:fixed;inset:0;z-index:150;background:rgba(8,12,16,0.98);flex-direction:column;align-items:center;justify-content:center;gap:2rem;backdrop-filter:blur(12px);}
+  .mobile-menu.open{display:flex;}
+  .mobile-menu a{font-family:'Orbitron',monospace;font-size:16px;letter-spacing:4px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;cursor:pointer;transition:color 0.2s;padding:0.5rem 0;border-bottom:1px solid transparent;}
+  .mobile-menu a:hover,.mobile-menu a.active{color:var(--cyan);border-bottom-color:var(--cyan);}
+  .mobile-menu-status{display:flex;align-items:center;gap:8px;margin-top:1rem;padding-top:1.5rem;border-top:1px solid var(--border);}
+
+  @media(max-width:768px){
+    nav{grid-template-columns:1fr auto;padding:0 1.25rem;}
+    .nav-links{display:none;}
+    .nav-status{display:none;}
+    .hamburger{display:flex;}
+  }
+  /* Spinner */
+  .spinner{width:32px;height:32px;border:2px solid var(--border);border-top-color:var(--cyan);border-radius:50%;animation:spin 0.8s linear infinite;margin:2rem auto;}
+
+  /* Pagination */
+  .pagi{display:flex;gap:0.5rem;justify-content:center;margin-top:1.25rem;flex-wrap:wrap;}
+  .pg-btn{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:1px;padding:6px 12px;border:1px solid var(--border);color:var(--text-dim);cursor:pointer;background:transparent;transition:all 0.2s;}
+  .pg-btn:hover,.pg-btn.active{border-color:var(--cyan);color:var(--cyan);}
+  .pg-btn:disabled{opacity:0.25;cursor:not-allowed;}
+  .pg-info{font-size:11px;color:var(--text-dim);text-align:center;margin-top:0.6rem;letter-spacing:1px;}
+
+  /* Join */
+  .join-box{background:var(--bg-card);border:1px solid var(--border);padding:2rem;max-width:560px;position:relative;margin:0 auto;}
+  .join-box::before,.join-box::after{content:'';position:absolute;width:14px;height:14px;border-color:var(--gold-dim);border-style:solid;opacity:0.4;}
+  .join-box::before{top:8px;left:8px;border-width:1px 0 0 1px;}
+  .join-box::after{bottom:8px;right:8px;border-width:0 1px 1px 0;}
+  .recruit-badge{display:inline-flex;align-items:center;gap:6px;font-size:10px;letter-spacing:2px;padding:4px 12px;text-transform:uppercase;margin-bottom:1.25rem;}
+  .recruit-open{background:rgba(61,232,61,0.07);border:1px solid rgba(61,232,61,0.3);color:var(--green);}
+  .recruit-closed{background:rgba(232,64,64,0.07);border:1px solid rgba(232,64,64,0.3);color:var(--red);}
+  .step-row{display:flex;gap:0.75rem;align-items:flex-start;margin-bottom:0.7rem;}
+  .step-n{font-family:'Orbitron',monospace;font-size:10px;color:var(--cyan);min-width:20px;padding-top:1px;}
+
+  footer{position:relative;z-index:1;background:var(--bg-panel);border-top:1px solid var(--border);padding:1.5rem;text-align:center;}
+  .footer-name{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:4px;color:var(--cyan-dim);margin-bottom:4px;}
+  .footer-copy{font-size:10px;color:var(--text-dim);letter-spacing:1px;}
+</style>
+</head>
+<body>
+<canvas id="bgCanvas" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></canvas>
+
+
+<!-- Loading -->
+<div class="loading-screen" id="loadScreen">
+  <div class="load-ring"></div>
+  <div class="load-tag">CONNECTING TO RSI NETWORK</div>
+  <div class="load-sid" id="loadSid">···</div>
+  <div class="load-sub" id="loadSub">正在拉取组织数据...</div>
+</div>
+
+<!-- Fatal error -->
+<div class="fatal" id="fatalScreen">
+  <div class="fatal-title">⚠ 数据加载失败</div>
+  <div class="fatal-msg" id="fatalMsg"></div>
+  <a class="fatal-link" href="https://robertsspaceindustries.com/en/orgs/11111111" target="_blank">→ 直接访问 RSI 官方页面</a>
+</div>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-logo" id="navLogo">ORG · <em>11111111</em></div>
+  <div class="nav-links">
+    <a class="active" onclick="showPage('home',this)">首页</a>
+    <a onclick="showPage('org',this)">组织</a>
+    <a onclick="showPage('members',this)">成员</a>
+    <a onclick="showPage('websites',this)">网站</a>
+    <a onclick="showPage('join',this)">加入</a>
+  </div>
+  <div style="display:flex;align-items:center;gap:1rem;justify-content:flex-end;">
+    <div class="nav-status" id="navStatus" style="gap:12px;cursor:default;justify-content:flex-end;">
+    <div style="display:flex;align-items:center;gap:6px;">
+      <div class="dot" id="serverDot"></div>
+      <span id="serverTxt" style="font-size:10px;letter-spacing:1px;">检测中...</span>
+    </div>
+    <div style="width:1px;height:12px;background:var(--border);"></div>
+    <div style="display:flex;align-items:center;gap:5px;">
+      <span style="font-size:9px;letter-spacing:1px;color:var(--text-dim);text-transform:uppercase;">版本</span>
+      <span id="navVersion" style="font-family:'Orbitron',monospace;font-size:10px;color:var(--gold);letter-spacing:1px;">—</span>
+    </div>
+  </div>
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu" onclick="handleMenuClick(event)">
+  <a onclick="showPage('home',this);closeMenu()">首页</a>
+  <a onclick="showPage('org',this);closeMenu()">组织</a>
+  <a onclick="showPage('members',this);closeMenu()">成员</a>
+  <a onclick="showPage('websites',this);closeMenu()">网站</a>
+  <a onclick="showPage('join',this);closeMenu()">加入</a>
+  <div class="mobile-menu-status">
+    <div class="dot" id="mobileDot" style="width:8px;height:8px;"></div>
+    <span id="mobileTxt" style="font-size:11px;letter-spacing:2px;color:var(--text-dim);">—</span>
+    <span style="margin:0 8px;color:var(--border);">|</span>
+    <span style="font-size:10px;color:var(--text-dim);letter-spacing:1px;">版本</span>
+    <span id="mobileVersion" style="font-family:'Orbitron',monospace;font-size:11px;color:var(--gold);margin-left:4px;">—</span>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="page active" id="home">
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-tag">STAR CITIZEN ORGANIZATION</div>
+    <div id="heroLogo"></div>
+    <div class="hero-title" id="heroTitle">···</div>
+    <div class="hero-sid" id="heroSid">SID · 11111111</div>
+    <div class="hero-divider"></div>
+    <p class="hero-desc" id="heroDesc"></p>
+    <div class="hero-btns" style="flex-direction:column;align-items:center;gap:0.75rem;">
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center;">
+        <a class="btn btn-primary" id="rsiBtn" href="https://robertsspaceindustries.com/en/orgs/11111111" target="_blank">RSI 官方页面</a>
+        <a class="btn btn-primary" onclick="showPage('join',document.querySelectorAll('.nav-links a')[4])">加入申请</a>
+      </div>
+
+    </div>
+
+    <!-- Announcements -->
+    <div class="announce-wrap fade-in" style="animation-delay:1.3s">
+      <div class="announce-header">
+        <div class="announce-title">📢 公告栏</div>
+        <div class="announce-count" id="announceCount"></div>
+      </div>
+      <div id="announceList"><div class="announce-spinner"></div></div>
+    </div>
+
+  </div>
+  <div class="stats-bar">
+    <div class="stat-item"><span class="stat-num" id="sMembers">-</span><span class="stat-label">在籍成员</span></div>
+    <div class="stat-item"><span class="stat-num" id="sType">-</span><span class="stat-label">组织类型</span></div>
+    <div class="stat-item"><span class="stat-num" id="sCommit">-</span><span class="stat-label">参与程度</span></div>
+    <div class="stat-item"><span class="stat-num" id="sRecruit">-</span><span class="stat-label">招募状态</span></div>
+    <div class="stat-item"><span class="stat-num" id="sLang">-</span><span class="stat-label">语言</span></div>
+  </div>
+</div>
+
+<!-- ORG INFO -->
+<div class="page" id="org">
+  <div id="orgBannerWrap"></div>
+  <div class="section">
+    <div class="sec-hd"><div class="sec-line"></div><div class="sec-title">组织详情</div><div class="sec-line"></div></div>
+    <div class="info-grid" id="infoGrid"></div>
+    <div class="headline-box" id="headlineBox" style="display:none;"></div>
+  </div>
+  <div class="section">
+    <div class="sec-hd"><div class="sec-line"></div><div class="sec-title">舰队历史</div><div class="sec-line"></div></div>
+    <div class="headline-box" style="font-size:13.5px;line-height:2;color:var(--text);">
+      <p style="margin-bottom:1.25rem;line-height:2;">纪元2945·启航：龙出东方，星落尘寰<br>当UEE（地球联合帝国）的疆域在银河边缘显露疲态，当海盗割据、异星摩擦成为星际航行的常态，一群流淌着华夏血脉的星际公民，于地球亚洲轨道站缔结盟约——华夏舰队正式成立。初代舰长K神，曾是UEE舰队王牌飞行员，因不满帝国对边境殖民地的漠视，率百名同胞携三艘改装护卫舰"昆仑""泰山""秦岭"启程，以"守华夏之魂，拓星海之土"为誓言，扎根于星图边缘的"龙渊"跳跃点，成为首个以华人社群为核心的跨星系武装组织。<br>初期的舰队以护航贸易、清剿海盗为业，凭借精准的战术配合与"义利兼顾"的行事准则，迅速在混乱的边境闯出威名。在"阿尔法-7星域护航战"中，舰队以寡敌众，击退三倍于己的海盗舰队，成功保护十艘满载医疗物资的平民运输船，此战让"华夏龙旗"成为边境星域的安全象征，三个月内便有近千名各族星际公民申请加入，舰队规模扩充至二十艘战舰，初步形成"探索、作战、后勤"三大分支。</p><p style="margin-bottom:1.25rem;line-height:2;">纪元2948·拓土：星轨为脉，筑垒安邦<br>随着实力壮大，舰队确立"以龙渊为核心，辐射三域"的发展战略，在无人问津的"玄武星域"建立首个永久性基地"昆仑堡"。基地不仅具备战舰维修、物资储备功能，更向所有友善势力开放贸易与补给服务，逐渐成为边境星域的中立枢纽。这一时期，舰队组建专属勘探队，成功发现"朱雀""白虎"两大未登记跳跃点，为人类开辟两条全新星际航线，UEE官方虽未公开认可，却私下授予舰队"边境秩序维护特许权"。<br>同年，剜度尔族群突袭"朱雀航线"平民殖民点，舰队启动"护巢行动"，历时半月肃清星域内异星武装，收复三座殖民站。此战中，舰队工程师团队改良的"火龙"舰载导弹系统大放异彩，其精准打击能力被多个星际组织效仿。战后，舰队吸纳大量殖民点平民加入，后勤分支升级为"神农事业部"，实现能源、弹药的自主生产，彻底摆脱对UEE补给体系的依赖。</p><p style="margin-bottom:1.25rem;line-height:2;">纪元2952·盟誓：纵横星河，执守公义<br>华夏舰队的崛起引发区域势力关注，面对海盗联盟"黑帆会"与部分割据军阀的联合施压，舰队发起"星盟计划"，与"自由探索者同盟""新地球殖民卫队"缔结攻守同盟，形成覆盖七星域的势力网络。在"黑帆战争"中，舰队担任盟军主力，以"昆仑堡"为据点，运用"诱敌深入、分进合击"的经典战术，摧毁海盗主力舰七艘，收复被占领的五座跳跃点，此战奠定舰队在东银河边境的主导地位。<br>战后，舰队制定《华夏舰队宪章》，明确"不侵略、不结盟、护弱小、守正义"的四大原则，拒绝UEE的招安提议，坚持保持独立地位。同时成立"星火学院"，为各族青年提供飞行、作战、勘探等技能培训，累计培养星际人才逾万人，其中不乏其他势力的核心骨干，舰队的影响力从军事领域延伸至文化、科技层面。</p><p style="margin-bottom:1.25rem;line-height:2;">纪元2957·鼎盛：龙旗所指，星河同钦<br>舰队规模扩张至百艘战舰，形成"九龙主力舰队"与"二十八星宿辅助舰队"的完整编制，拥有跨星域跃迁能力的旗舰"华夏号"正式下水，其搭载的"北斗"导航系统与"长城"护盾技术，达到当时星际顶尖水平。这一时期，舰队主导"星海拓荒计划"，组织百次以上深空探索任务，发现三颗宜居行星与十余处稀有矿产资源带，均无偿向人类科学界公开坐标，推动全人类的星际殖民进程。<br>在"伽马星域危机"中，异星文明"克雷尔 hive"突然入侵，舰队第一时间启动"御敌预案"，联合盟友组建"人类联合防线"，坚守三个月为各殖民点撤离争取时间。舰队飞行员卢卡斯驾驶"应龙"战机，以自毁方式撞毁异星母舰核心，其"以身殉道"的壮举被载入《星际英雄名录》，"龙的传人"成为全银河对华夏舰队成员的尊称。</p><p style="margin-bottom:1.25rem;line-height:2;">纪元2960·传承：薪火不灭，星海永续<br>历经十五年发展，华夏舰队已成为东银河最具影响力的独立星际组织，拥有三座大型基地、五座贸易枢纽，成员涵盖人类、泰兰、巴努等多个种族，总数突破五万人。舰队始终坚守初心，既在边境星域打击海盗、维护秩序，也向遭遇灾害的殖民点提供无偿援助，更在科技领域持续突破，其研发的"蛟龙"隐形战舰、"女娲"医疗救援舰，成为星际文明的标杆。<br>如今，龙旗依然在星河中飘扬，新一代华夏舰队成员继承先辈的勇气与智慧，继续航行在未知的深空。他们不仅是战士、探险家，更是文明的传播者——将华夏"和而不同"的理念带向银河各处，用行动证明：人类的征途是星辰大海，而华夏的灵魂，将在星海中永远闪耀。</p>
+    </div>
+  </div>
+</div>
+
+<!-- MEMBERS -->
+<div class="page" id="members">
+  <div class="section">
+    <div class="sec-hd"><div class="sec-line"></div><div class="sec-title">成员名录</div><div class="sec-line"></div></div>
+    <div class="filter-bar">
+      <input class="filter-input" id="filterSearch" type="text" placeholder="搜索成员 ID..." oninput="applyFilter()">
+      <select class="filter-select" id="filterRank" onchange="applyFilter()">
+        <option value="">全部职衔</option>
+      </select>
+      <select class="filter-select" id="filterStars" onchange="applyFilter()">
+        <option value="">全部星级</option>
+        <option value="5">★★★★★</option>
+        <option value="4">★★★★</option>
+        <option value="3">★★★</option>
+        <option value="2">★★</option>
+        <option value="1">★</option>
+        <option value="0">无星级</option>
+      </select>
+      <select class="filter-select" id="sortBy" onchange="applyFilter()">
+        <option value="">默认排序</option>
+        <option value="stars-desc" selected>星级 高→低</option>
+        <option value="stars-asc">星级 低→高</option>
+        <option value="name-asc">ID A→Z</option>
+        <option value="name-desc">ID Z→A</option>
+      </select>
+      <span class="filter-count" id="filterCount"></span>
+    </div>
+    <div id="memberContent"><div class="spinner"></div></div>
+    <div class="pagi" id="pagi"></div>
+    <div class="pg-info" id="pgInfo"></div>
+    <div class="pg-info" id="cacheHint" style="margin-top:0.4rem;"></div>
+  </div>
+</div>
+
+<!-- JOIN -->
+<!-- WEBSITES -->
+<div class="page" id="websites">
+  <div class="section">
+    <div class="sec-hd"><div class="sec-line"></div><div class="sec-title">相关网站</div><div class="sec-line"></div></div>
+    <div class="website-grid">
+
+      <a class="website-card" href="https://www.erkul.games/live/calculator" target="_blank">
+        <div class="website-icon"><img src="https://www.erkul.games/favicon.ico" onerror="this.outerHTML='🎯'"></div>
+        <div class="website-info">
+          <div class="website-name">Erkul DPS Calculator</div>
+          <div class="website-desc">武器 DPS 查询工具，直观对比各武器伤害输出数据</div>
+          <div class="website-url">erkul.games</div>
+        </div>
+        <div class="website-arrow">→</div>
+      </a>
+
+      <a class="website-card" href="https://www.spviewer.eu/" target="_blank">
+        <div class="website-icon"><img src="https://www.spviewer.eu/favicon.ico" onerror="this.outerHTML='🔍'"></div>
+        <div class="website-info">
+          <div class="website-name">SPViewer</div>
+          <div class="website-desc">数据更详细的装备查询工具，信息全面但访问较慢</div>
+          <div class="website-url">spviewer.eu</div>
+        </div>
+        <div class="website-arrow">→</div>
+      </a>
+
+      <a class="website-card" href="https://scmdb.net/" target="_blank">
+        <div class="website-icon"><img src="https://scmdb.net/favicon.ico" onerror="this.outerHTML='📋'"></div>
+        <div class="website-info">
+          <div class="website-name">SCMDB</div>
+          <div class="website-desc">第三方任务蓝图数据库，任务信息查询（英文）</div>
+          <div class="website-url">scmdb.net</div>
+        </div>
+        <div class="website-arrow">→</div>
+      </a>
+
+      <a class="website-card" href="https://uexcorp.space/" target="_blank">
+        <div class="website-icon"><img src="https://uexcorp.space/favicon.ico" onerror="this.outerHTML='💱'"></div>
+        <div class="website-info">
+          <div class="website-name">UEX Corp</div>
+          <div class="website-desc">游戏内货币与商品交易平台，实时行情与价格参考</div>
+          <div class="website-url">uexcorp.space</div>
+        </div>
+        <div class="website-arrow">→</div>
+      </a>
+
+      <a class="website-card" href="https://crafter.infinityfreeapp.com/" target="_blank">
+        <div class="website-icon"><img src="https://crafter.infinityfreeapp.com/favicon.ico" onerror="this.outerHTML='🔧'"></div>
+        <div class="website-info">
+          <div class="website-name">SC Crafter</div>
+          <div class="website-desc">蓝图查询工具，对比不同材料的制造差异与效益</div>
+          <div class="website-url">crafter.infinityfreeapp.com</div>
+        </div>
+        <div class="website-arrow">→</div>
+      </a>
+
+      <a class="website-card" href="https://finder.grakeinterplanetary.com/" target="_blank">
+        <div class="website-icon"><img src="https://finder.grakeinterplanetary.com/favicon.ico" onerror="this.outerHTML='🔭'"></div>
+        <div class="website-info">
+          <div class="website-name">星际寻物</div>
+          <div class="website-desc">查找各类物品在星际中的获取位置与途径</div>
+          <div class="website-url">finder.grakeinterplanetary.com</div>
+        </div>
+        <div class="website-arrow">→</div>
+      </a>
+
+      <a class="website-card" href="https://ccugame.app/" target="_blank">
+        <div class="website-icon"><img src="https://ccugame.app/favicon.ico" onerror="this.outerHTML='🚀'"></div>
+        <div class="website-info">
+          <div class="website-name">CCU Game</div>
+          <div class="website-desc">舰船 CCU 升级路径规划工具，帮助计算最优升级方案</div>
+          <div class="website-url">ccugame.app</div>
+        </div>
+        <div class="website-arrow">→</div>
+      </a>
+
+      <a class="website-card" href="https://www.kitsuneint.com/%E6%94%BB%E7%95%A5" target="_blank">
+        <div class="website-icon"><img src="https://www.kitsuneint.com/favicon.ico" onerror="this.outerHTML='📖'"></div>
+        <div class="website-info">
+          <div class="website-name">攻略一图流</div>
+          <div class="website-desc">Star Citizen 中文攻略合集，一图看懂各类玩法</div>
+          <div class="website-url">kitsuneint.com</div>
+        </div>
+        <div class="website-arrow">→</div>
+      </a>
+
+    </div>
+  </div>
+  </div>
+</div>
+
+
+<!-- JOIN -->
+<div class="page" id="join">
+  <div class="section">
+    <div class="sec-hd"><div class="sec-line"></div><div class="sec-title">申请加入</div><div class="sec-line"></div></div>
+    <div class="join-box">
+      <div id="recruitBadge"></div>
+      <p style="font-size:13px;color:var(--text-dim);line-height:1.9;margin-bottom:1.25rem;">通过以下步骤在 RSI 官网申请加入：</p>
+      <div class="step-row"><span class="step-n">01</span><span style="font-size:13px;">访问该组织的 RSI 官方页面</span></div>
+      <div class="step-row"><span class="step-n">02</span><span style="font-size:13px;">点击 <strong style="color:var(--cyan)">"Apply to Join"</strong> 按钮</span></div>
+      <div class="step-row"><span class="step-n">03</span><span style="font-size:13px;">等待管理员审核通过，即可成为正式成员</span></div>
+      <div style="margin-top:1.5rem;display:flex;gap:0.75rem;flex-wrap:wrap;">
+        <a class="btn btn-primary" id="joinBtn" href="https://robertsspaceindustries.com/en/orgs/11111111" target="_blank">前往 RSI 申请页面</a>
+        <a class="btn btn-ghost" href="https://qm.qq.com/q/8wCNiHactG" target="_blank">加入 QQ 群</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-name" id="footerName">ORG · 11111111</div>
+  <div class="footer-copy">数据来源：starcitizen-api.com &amp; robertsspaceindustries.com · 仅供展示</div>
+</footer>
+
+<script>
+const API_KEY = '4zMH84ApPywjKTR3fnEn5zGq8f4SKSgz';
+const ORG_SID = '11111111';
+const BASE = `https://api.starcitizen-api.com/${API_KEY}/v1/live`;
+// 填入你的 Cloudflare Worker URL（部署 worker.js 后获得）
+const PROXY_BASE = ''; // 例如：https://sc-proxy.yourname.workers.dev
+
+let memberCache = {}, curPage = 1, orgTotalMembers = 0;
+
+// HTML entity decoder — fixes garbled text from RSI API
+function decode(str){
+  if(!str) return str;
+  // Fix mojibake: UTF-8 bytes misread as latin1 (e.g. "ä¸­æ–‡" -> "中文")
+  try {
+    const bytes = Uint8Array.from(str.split('').map(c => c.charCodeAt(0)));
+    const fixed = new TextDecoder('utf-8').decode(bytes);
+    if(!fixed.includes('\uFFFD')) str = fixed;
+  } catch(e){}
+  // Decode HTML entities (&amp; &#233; etc.)
+  const el = document.createElement('textarea');
+  el.innerHTML = str;
+  return el.value;
+}
+
+// Stars
+
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(el)el.classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='members' && !memberCache['all']) loadMembers(1);
+
+}
+
+async function apiGet(endpoint){
+  const r = await fetch(`${BASE}/${endpoint}`);
+  if(!r.ok) throw new Error(`HTTP ${r.status}`);
+  const d = await r.json();
+  if(!d.success && d.message) throw new Error(d.message);
+  return d.data;
+}
+
+function renderOrg(d){
+  const name = decode(d.name || ORG_SID);
+  document.getElementById('loadSid').textContent = name;
+  const rsiUrl = d.url || `https://robertsspaceindustries.com/en/orgs/${ORG_SID}`;
+
+  // Nav & footer
+  document.getElementById('navLogo').textContent = ''; const em = document.createElement('em'); em.textContent = name; document.getElementById('navLogo').appendChild(em);
+  document.getElementById('footerName').textContent = name + ' · RSI ORG';
+
+
+  // Hero logo
+  const lw = document.getElementById('heroLogo');
+  if(d.logo){
+    lw.innerHTML=`<img class="hero-logo" src="${d.logo}" onerror="this.outerHTML='<div class=hero-logo-ph>${name.charAt(0)}</div>'">`;
+  } else {
+    lw.innerHTML=`<div class="hero-logo-ph">${name.charAt(0)}</div>`;
+  }
+
+  document.getElementById('heroTitle').textContent = name;
+  document.getElementById('heroSid').textContent = 'SID · ' + ORG_SID;
+
+  const plain = decode((d.headline?.plaintext||'').trim());
+  const desc = plain.length > 220 ? plain.slice(0,220)+'…' : plain;
+  // Typewriter effect for hero desc
+  document.getElementById('heroDesc').textContent = desc || '— 暂无简介 —';
+
+  document.getElementById('rsiBtn').href = rsiUrl;
+  document.getElementById('joinBtn').href = rsiUrl;
+
+  // Stats
+  orgTotalMembers = parseInt(d.members) || 0;
+  const ARCHETYPE = { Corporation:'企业', PMC:'私人军事', Faith:'信仰', Organization:'组织', Club:'俱乐部' };
+  const COMMITMENT = { Hardcore:'硬核', Regular:'常规', Casual:'休闲' };
+  const LANG = { English:'英语', Chinese:'中文', French:'法语', German:'德语', Spanish:'西班牙语', Portuguese:'葡萄牙语', Russian:'俄语', Japanese:'日语', Korean:'韩语', Italian:'意大利语', Polish:'波兰语', Dutch:'荷兰语', Turkish:'土耳其语' };
+  document.getElementById('sMembers').textContent = d.members ?? '-';
+  document.getElementById('sType').textContent = ARCHETYPE[d.archetype] || d.archetype || '-';
+  document.getElementById('sCommit').textContent = COMMITMENT[d.commitment] || d.commitment || '-';
+  document.getElementById('sRecruit').textContent = '开放中';
+  document.getElementById('sRecruit').style.color = 'var(--green)';
+  document.getElementById('sLang').textContent = LANG[d.lang] || d.lang || '-';
+
+  // Banner
+  if(d.banner){
+    document.getElementById('orgBannerWrap').innerHTML=`<div class="parallax-wrap"><img class="parallax-img" id="bannerImg" src="${d.banner}" onerror="this.parentNode.remove()"></div>`;
+    // Parallax scroll
+    const bannerWrap = document.getElementById('orgBannerWrap');
+    if(bannerWrap){
+      window.addEventListener('scroll', ()=>{
+        const img = document.getElementById('bannerImg');
+        if(!img) return;
+        const rect = bannerWrap.getBoundingClientRect();
+        const ratio = Math.max(0, Math.min(1, -rect.top / (rect.height + window.innerHeight)));
+        img.style.transform = `translateY(${ratio * 60 - 15}px)`;
+      }, {passive:true});
+    }
+  }
+
+  // Info cards
+  const cards = [
+    {l:'组织名称', v:name},
+    {l:'SID', v:ORG_SID, c:'cyan'},
+    {l:'类型', v:ARCHETYPE[d.archetype]||d.archetype||'-'},
+    {l:'参与程度', v:COMMITMENT[d.commitment]||d.commitment||'-', c:'gold'},
+    {l:'语言', v:LANG[d.lang]||d.lang||'-'},
+    {l:'成员数', v:(d.members??'-')+'人', c:'cyan'},
+    {l:'招募状态', v:'开放中', c:'green'},
+    {l:'角色扮演', v:d.roleplay?'是':'否'},
+  ];
+  const FOCUS = { 'Exploration':'探索', 'Freelancing':'自由佣兵', 'Trading':'贸易', 'Mining':'采矿', 'Bounty Hunting':'赏金猎人', 'Bounty_Hunting':'赏金猎人', 'Piracy':'海盗', 'Carebearing':'互助', 'Engineering':'工程', 'Resources':'资源', 'Transport':'运输', 'Scouting':'侦察', 'Medical':'医疗', 'Fuel':'燃料', 'Repair':'维修', 'Manufacturing':'制造', 'Research':'研究', 'Security':'安保', 'Military':'军事', 'Social':'社交', 'Roleplay':'角色扮演', 'Streaming':'直播', 'Recruiting':'招募' };
+  if(d.focus?.primary?.name) cards.push({l:'主要方向', v:FOCUS[d.focus.primary.name]||d.focus.primary.name});
+  if(d.focus?.secondary?.name) cards.push({l:'次要方向', v:FOCUS[d.focus.secondary.name]||d.focus.secondary.name});
+  document.getElementById('infoGrid').innerHTML = cards.map(c=>
+    `<div class="info-card"><div class="info-lbl">${c.l}</div><div class="info-val ${c.c||''}">${c.v}</div></div>`
+  ).join('');
+
+  // Headline
+  if(plain){
+    const hb = document.getElementById('headlineBox');
+    hb.textContent = plain;
+    hb.style.display='block';
+  }
+
+  // Recruit badge
+  document.getElementById('recruitBadge').innerHTML = d.recruiting
+    ? `<div class="recruit-badge recruit-open"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;"></span>招募状态：开放中</div>`
+    : `<div class="recruit-badge recruit-open"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 1.5s infinite;"></span>招募状态：开放中</div>`;
+}
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+async function fetchPageWithRetry(p, retries = 6){
+  // Try live first, fall back to auto mode on failure
+  const modes = ['live', 'auto', 'cache'];
+  for(let i = 0; i < retries; i++){
+    const mode = modes[Math.min(i, modes.length - 1)];
+    try{
+      const r = await fetch(`https://api.starcitizen-api.com/${API_KEY}/v1/${mode}/organization_members/${ORG_SID}?page=${p}`);
+      if(!r.ok) throw new Error(`HTTP ${r.status}`);
+      const json = await r.json();
+      const batch = Array.isArray(json.data) ? json.data : [];
+      return batch;
+    } catch(e){
+      const wait = 2000 * (i + 1);
+      console.warn(`第${p}页第${i+1}次失败(${mode})，${wait}ms后重试:`, e.message);
+      if(i < retries - 1) await sleep(wait);
+    }
+  }
+  console.error(`第${p}页彻底失败，跳过`);
+  return [];
+}
+
+const CACHE_KEY = `sc_members_${ORG_SID}`;
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24小时
+
+function saveToLocal(members){
+  try{
+    localStorage.setItem(CACHE_KEY, JSON.stringify({
+      ts: Date.now(),
+      members
+    }));
+  } catch(e){ console.warn('localStorage 写入失败:', e); }
+}
+
+function loadFromLocal(){
+  try{
+    const raw = localStorage.getItem(CACHE_KEY);
+    if(!raw) return null;
+    const { ts, members } = JSON.parse(raw);
+    const age = Date.now() - ts;
+    if(age > CACHE_TTL) return null; // 过期
+    return { members, age };
+  } catch(e){ return null; }
+}
+
+function clearLocalCache(){
+  localStorage.removeItem(CACHE_KEY);
+  memberCache = {};
+  loadMembers(1);
+}
+
+function formatAge(ms){
+  const m = Math.floor(ms / 60000);
+  if(m < 60) return `${m} 分钟前`;
+  const h = Math.floor(m / 60);
+  return `${h} 小时前`;
+}
+
+async function loadMembers(page){
+  if(memberCache['all']){ renderMembers(memberCache['all']); return; }
+
+  // Try localStorage first
+  const cached = loadFromLocal();
+  if(cached){
+    memberCache['all'] = cached.members;
+    renderMembers(cached.members);
+    document.getElementById('cacheHint').innerHTML =
+      `<span style="color:var(--text-dim);font-size:10px;letter-spacing:1px">缓存于 ${formatAge(cached.age)}</span>
+       <button class="pg-btn" style="margin-left:8px;font-size:9px;padding:3px 8px" onclick="clearLocalCache()">🔄 刷新</button>`;
+    return;
+  }
+
+  document.getElementById('memberContent').innerHTML='<div class="spinner"></div>';
+  document.getElementById('filterCount').textContent = '加载中...';
+  try{
+    const totalMembers = orgTotalMembers;
+    const totalPages = totalMembers > 0 ? Math.ceil(totalMembers / 32) : 15;
+
+    let all = [];
+    for(let p = 1; p <= totalPages; p++){
+      document.getElementById('filterCount').textContent =
+        `已加载 ${all.length} / ${totalMembers} 人... (${p}/${totalPages} 页)`;
+      const batch = await fetchPageWithRetry(p);
+      // 不以 batch 长度判断终止，跑完所有按总人数算出的页数
+      all = all.concat(batch);
+      if(p < totalPages) await sleep(1500); // 最后一页不用等
+    }
+    // Pad with placeholder cards for private/hidden members
+    const hidden = orgTotalMembers - all.length;
+    if(hidden > 0){
+      for(let i = 0; i < hidden; i++){
+        all.push({ handle: '私密账号', display: '私密账号', image: '', rank: '—', stars: 0, roles: [], private: true });
+      }
+    }
+    memberCache['all'] = all;
+    saveToLocal(all);
+    document.getElementById('sMembers').textContent = orgTotalMembers;
+    renderMembers(all);
+  } catch(e){
+    document.getElementById('memberContent').innerHTML=
+      `<div style="color:var(--red);font-size:13px;padding:1rem;">
+        成员数据加载失败：${e.message}
+        <button class="pg-btn" style="margin-left:1rem;margin-top:0.5rem" onclick="clearLocalCache()">🔄 重试</button>
+      </div>`;
+  }
+}
+
+const PAGE_SIZE = 32;
+let viewPage = 1;
+
+function renderMembers(members){
+  const ranks = [...new Set(members.map(m=>m.rank).filter(Boolean))];
+  const rankSel = document.getElementById('filterRank');
+  const curRank = rankSel.value;
+  rankSel.innerHTML = '<option value="">全部职衔</option>' +
+    ranks.map(r=>`<option value="${r}"${r===curRank?'selected':''}>${r}</option>`).join('');
+  viewPage = 1;
+  applyFilter();
+}
+
+function applyFilter(){
+  const allCached = memberCache['all'] || [];
+  if(!allCached.length) return;
+
+  const search = document.getElementById('filterSearch').value.trim().toLowerCase();
+  const rank   = document.getElementById('filterRank').value;
+  const stars  = document.getElementById('filterStars').value;
+  const sort   = document.getElementById('sortBy').value;
+
+  let filtered = allCached.filter(m => {
+    const handle = (m.handle||'').toLowerCase();
+    const display = (m.display||'').toLowerCase();
+    if(search && !handle.includes(search) && !display.includes(search)) return false;
+    if(rank && m.rank !== rank) return false;
+    if(stars !== '' && (m.stars||0) !== parseInt(stars)) return false;
+    return true;
+  });
+
+  if(!sort || sort === 'stars-desc') filtered.sort((a,b)=>(b.stars||0)-(a.stars||0));
+  else if(sort === 'stars-asc') filtered.sort((a,b)=>(a.stars||0)-(b.stars||0));
+  else if(sort === 'name-asc') filtered.sort((a,b)=>(a.handle||'').localeCompare(b.handle||''));
+  else if(sort === 'name-desc') filtered.sort((a,b)=>(b.handle||'').localeCompare(a.handle||''));
+
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  if(viewPage > totalPages) viewPage = totalPages;
+
+  const start = (viewPage - 1) * PAGE_SIZE;
+  const slice = filtered.slice(start, start + PAGE_SIZE);
+
+  document.getElementById('filterCount').textContent =
+    `${total} / ${allCached.length} 名成员`;
+
+  const el = document.getElementById('memberContent');
+  if(!slice.length){
+    el.innerHTML='<div style="color:var(--text-dim);font-size:13px;padding:1rem;">没有符合条件的成员</div>';
+    document.getElementById('pagi').innerHTML='';
+    document.getElementById('pgInfo').textContent='';
+    return;
+  }
+
+  el.innerHTML=`<div class="member-grid">${slice.map(m=>{
+    const init=(m.display||m.handle||'?').charAt(0).toUpperCase();
+    const av=m.image
+      ?`<img class="m-avatar" src="${m.image}" onerror="this.outerHTML='<div class=m-avatar-ph>${init}</div>'">`
+      :`<div class="m-avatar-ph">${init}</div>`;
+    const starsHtml=Array.from({length:5},(_,i)=>`<div class="m-star${i<(m.stars||0)?'':' dim'}"></div>`).join('');
+    const roles=(m.roles||[]).map(r=>`<span class="m-role">${r}</span>`).join('');
+    if(m.private){
+      return `<div class="member-card" style="opacity:0.35;border-style:dashed">
+        <div class="m-avatar-ph" style="color:var(--text-dim)">?</div>
+        <div class="m-handle" style="color:var(--text-dim)">私密账号</div>
+        <div class="m-rank">—</div>
+      </div>`;
+    }
+    return `<div class="member-card">${av}
+      <div class="m-handle">${m.handle||'Unknown'}</div>
+      <div class="m-rank">${m.rank||'Member'}</div>
+      <div class="m-stars">${starsHtml}</div>
+      ${roles?`<div class="m-roles">${roles}</div>`:''}
+    </div>`;
+  }).join('')}</div>`;
+
+  buildPagi(viewPage, totalPages);
+  document.getElementById('pgInfo').textContent =
+    `第 ${viewPage} / ${totalPages} 页 · ${start+1}–${Math.min(start+PAGE_SIZE,total)} / ${total} 人`;
+}
+
+function buildPagi(page, totalPages){
+  if(totalPages <= 1){
+    document.getElementById('pagi').innerHTML='';
+    return;
+  }
+  const range = 2;
+  let btns = '';
+  for(let i = 1; i <= totalPages; i++){
+    if(i === 1 || i === totalPages || (i >= page-range && i <= page+range)){
+      btns += `<button class="pg-btn${i===page?' active':''}" onclick="goPage(${i})">${i}</button>`;
+    } else if(i === page-range-1 || i === page+range+1){
+      btns += `<span class="pg-btn" style="pointer-events:none;border:none;color:var(--text-dim)">…</span>`;
+    }
+  }
+  document.getElementById('pagi').innerHTML=`
+    <button class="pg-btn" onclick="goPage(${page-1})" ${page<=1?'disabled':''}>◀</button>
+    ${btns}
+    <button class="pg-btn" onclick="goPage(${page+1})" ${page>=totalPages?'disabled':''}>▶</button>`;
+}
+
+function goPage(p){
+  viewPage = p;
+  applyFilter();
+  document.getElementById('members').scrollIntoView({behavior:'smooth'});
+}
+
+
+
+async function fetchNavStatus(){
+  const dot  = document.getElementById('serverDot');
+  const txt  = document.getElementById('serverTxt');
+  const ver  = document.getElementById('navVersion');
+  const nav  = document.getElementById('navStatus');
+  try{
+    // Fetch stats for version — use cache mode for reliability
+    const sr = await fetch(`https://api.starcitizen-api.com/${API_KEY}/v1/live/stats`);
+    const sd = (await sr.json())?.data;
+    ver.textContent = 'LiVE 4.8.0';
+    document.getElementById('mobileVersion').textContent = 'LiVE 4.8.0';
+
+    // Ping org API to check server reachability
+    const controller = new AbortController();
+    const timer = setTimeout(()=>controller.abort(), 8000);
+    const pr = await fetch(`https://api.starcitizen-api.com/${API_KEY}/v1/cache/organization/${ORG_SID}`,{signal:controller.signal});
+    clearTimeout(timer);
+    const pd = await pr.json();
+    if(pd?.success){
+      dot.style.background='var(--green)';
+      txt.textContent='服务器正常';
+      nav.style.color='var(--green)';
+      document.getElementById('mobileDot').style.background='var(--green)';
+      document.getElementById('mobileTxt').textContent='服务器正常';
+      document.getElementById('mobileTxt').style.color='var(--green)';
+    } else {
+      dot.style.background='var(--gold)';
+      txt.textContent='状态异常';
+      nav.style.color='var(--gold)';
+      document.getElementById('mobileDot').style.background='var(--gold)';
+      document.getElementById('mobileTxt').textContent='状态异常';
+      document.getElementById('mobileTxt').style.color='var(--gold)';
+    }
+  } catch(e){
+    dot.style.background='var(--red)';
+    txt.textContent= e.name==='AbortError'?'连接超时':'服务器错误';
+    nav.style.color='var(--red)';
+  }
+}
+
+async function fetchAnnouncements(){
+  const GITHUB_USER = 'Aliww2468';
+  const GITHUB_REPO = 'org-1';
+  const LABEL = '公告';
+  try{
+    const r = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/issues?labels=${encodeURIComponent(LABEL)}&state=open&per_page=5`);
+    const issues = await r.json();
+    const el = document.getElementById('announceList');
+    const cnt = document.getElementById('announceCount');
+
+    if(!Array.isArray(issues) || issues.length === 0){
+      el.innerHTML = '<div class="announce-empty">暂无公告</div>';
+      cnt.textContent = '';
+      return;
+    }
+
+    cnt.textContent = issues.length + ' 条';
+    el.innerHTML = issues.map((issue, i) => {
+      const date = new Date(issue.created_at).toLocaleDateString('zh-CN');
+      const body = (issue.body || '').replace(/\r\n/g,'\n').trim();
+      const short = body.length > 100 ? body.slice(0,100)+'…' : body;
+      const labels = issue.labels
+        .filter(l => l.name !== '公告')
+        .map(l => `<span class="announce-label">${l.name}</span>`)
+        .join(' ');
+      return `<div class="announce-card" onclick="toggleAnnounce(this)">
+        ${labels ? `<div>${labels}</div>` : ''}
+        <div class="announce-card-top">
+          <div class="announce-card-title">${issue.title}</div>
+          <div class="announce-card-date">${date}</div>
+        </div>
+        <div class="announce-card-body" data-full="${encodeURIComponent(body)}" data-short="${encodeURIComponent(short)}">${short||'点击展开'}</div>
+      </div>`;
+    }).join('');
+  } catch(e){
+    document.getElementById('announceList').innerHTML =
+      '<div class="announce-empty">公告加载失败</div>';
+  }
+}
+
+function toggleAnnounce(card){
+  const body = card.querySelector('.announce-card-body');
+  const isExpanded = body.classList.contains('expanded');
+  if(isExpanded){
+    body.classList.remove('expanded');
+    body.textContent = decodeURIComponent(body.dataset.short) || '点击展开';
+  } else {
+    body.classList.add('expanded');
+    body.textContent = decodeURIComponent(body.dataset.full) || '暂无内容';
+  }
+}
+
+
+function handleMenuClick(e){
+  // Close if clicking the backdrop (not on a link or status area)
+  if(e.target === document.getElementById('mobileMenu')){
+    closeMenu();
+  }
+}
+
+function toggleMenu(){
+  const hb = document.getElementById('hamburger');
+  const mm = document.getElementById('mobileMenu');
+  hb.classList.toggle('open');
+  mm.classList.toggle('open');
+}
+
+function closeMenu(){
+  document.getElementById('hamburger').classList.remove('open');
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.body.style.overflow = '';
+  // Sync active state in mobile menu
+  const pages = ['home','org','members','websites','join'];
+  document.querySelectorAll('.mobile-menu a').forEach((a,i)=>{
+    a.classList.toggle('active', document.getElementById(pages[i])?.classList.contains('active'));
+  });
+}
+
+async function init(){
+  document.getElementById('loadSid').textContent = '···';
+  document.getElementById('loadSub').textContent = `正在连接 RSI 网络，拉取 ${ORG_SID}...`;
+  fetchNavStatus(); // 提前并行拉取版本号和服务器状态
+  try{
+    const org = await apiGet(`organization/${ORG_SID}`);
+    renderOrg(org);
+    const ls = document.getElementById('loadScreen');
+    await sleep(500);
+    ls.classList.add('out');
+    // Fade in main content after loading screen starts fading
+    setTimeout(()=>{
+      ls.style.display='none';
+      document.querySelectorAll('nav, .page, footer').forEach(el=>{
+        el.style.opacity='0';
+        el.style.transition='opacity 0.8s ease';
+        requestAnimationFrame(()=>requestAnimationFrame(()=>{ el.style.opacity='1'; }));
+      });
+    }, 300);
+    loadMembers(1);
+    fetchNavStatus();
+    fetchAnnouncements();
+    setInterval(fetchNavStatus, 3 * 60 * 1000);
+  } catch(e){
+    document.getElementById('loadScreen').style.display='none';
+    const fs = document.getElementById('fatalScreen');
+    document.getElementById('fatalMsg').textContent =
+      `无法获取组织 "${ORG_SID}" 的数据。
+错误信息：${e.message}
+
+可能原因：API Key 已过期、SID 不存在、或 CORS 限制。`;
+    fs.style.display='flex';
+  }
+}
+
+init();
+
+// ── Dynamic nebula background ──
+(function(){
+  const canvas = document.getElementById('bgCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize(){
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Particle factory
+  function makeParticle(){
+    return {
+      x:  Math.random() * W,
+      y:  Math.random() * H,
+      r:  Math.random() * 1.8 + 0.3,
+      vx: (Math.random() - 0.5) * 0.18,
+      vy: (Math.random() - 0.5) * 0.18,
+      // colour: mostly white/blue-white, rare gold
+      hue:   Math.random() < 0.12 ? 42 : (Math.random() < 0.3 ? 200 : 0),
+      sat:   Math.random() < 0.4  ? Math.floor(Math.random()*40+20) : 0,
+      alpha: Math.random() * 0.55 + 0.1,
+      pulse: Math.random() * Math.PI * 2,
+      pulseSpeed: Math.random() * 0.008 + 0.003,
+    };
+  }
+
+  // Init particles
+  const COUNT = Math.min(180, Math.floor(W * H / 8000));
+  for(let i = 0; i < COUNT; i++) particles.push(makeParticle());
+
+  function draw(){
+    ctx.clearRect(0, 0, W, H);
+
+    particles.forEach(p => {
+      p.pulse += p.pulseSpeed;
+      const a = p.alpha * (0.7 + 0.3 * Math.sin(p.pulse));
+
+      // Soft glow
+      const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3.5);
+      const col = p.sat > 0
+        ? `hsla(${p.hue},${p.sat}%,80%,`
+        : `rgba(200,215,255,`;
+      grd.addColorStop(0,   col + (a * 0.9) + ')');
+      grd.addColorStop(0.4, col + (a * 0.3) + ')');
+      grd.addColorStop(1,   col + '0)');
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = grd;
+      ctx.fill();
+
+      // Sharp core
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.sat > 0
+        ? `hsla(${p.hue},${p.sat}%,95%,${a})`
+        : `rgba(230,240,255,${a})`;
+      ctx.fill();
+
+      // Drift
+      p.x += p.vx;
+      p.y += p.vy;
+
+      // Wrap edges
+      if(p.x < -10) p.x = W + 10;
+      if(p.x > W + 10) p.x = -10;
+      if(p.y < -10) p.y = H + 10;
+      if(p.y > H + 10) p.y = -10;
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+})();
+
+</script>
+</body>
+</html>

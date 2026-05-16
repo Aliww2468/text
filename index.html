@@ -1037,18 +1037,12 @@ function goPage(p){
 
 
 async function fetchNavStatus(){
-  const dot  = document.getElementById('serverDot');
-  const txt  = document.getElementById('serverTxt');
-  const ver  = document.getElementById('navVersion');
-  const nav  = document.getElementById('navStatus');
+  const dot = document.getElementById('serverDot');
+  const txt = document.getElementById('serverTxt');
+  const ver = document.getElementById('navVersion');
+  if(ver) ver.textContent = 'LiVE 4.8.0';
+  if(!dot || !txt) return;
   try{
-    // Fetch stats for version — use cache mode for reliability
-    const sr = await fetch(`https://api.starcitizen-api.com/${API_KEY}/v1/live/stats`);
-    const sd = (await sr.json())?.data;
-    ver.textContent = 'LiVE 4.8.0';
-    (document.getElementById('mobileVersion')||{}).textContent = 'LiVE 4.8.0';
-
-    // Ping org API to check server reachability
     const controller = new AbortController();
     const timer = setTimeout(()=>controller.abort(), 8000);
     const pr = await fetch(`https://api.starcitizen-api.com/${API_KEY}/v1/cache/organization/${ORG_SID}`,{signal:controller.signal});
@@ -1056,23 +1050,26 @@ async function fetchNavStatus(){
     const pd = await pr.json();
     if(pd?.success){
       dot.style.background='var(--green)';
+      dot.style.color='var(--green)';
+      txt.style.color='var(--green)';
       txt.textContent='服务器正常';
-      nav.style.color='var(--green)';
-      (document.getElementById('mobileDot')||{}).style.background='var(--green)';
-      (document.getElementById('mobileTxt')||{}).textContent='服务器正常';
-      (document.getElementById('mobileTxt')||{}).style.color='var(--green)';
     } else {
       dot.style.background='var(--gold)';
+      dot.style.color='var(--gold)';
+      txt.style.color='var(--gold)';
       txt.textContent='状态异常';
-      nav.style.color='var(--gold)';
-      (document.getElementById('mobileDot')||{}).style.background='var(--gold)';
-      (document.getElementById('mobileTxt')||{}).textContent='状态异常';
-      (document.getElementById('mobileTxt')||{}).style.color='var(--gold)';
     }
   } catch(e){
-    dot.style.background='var(--red)';
-    txt.textContent= e.name==='AbortError'?'连接超时':'服务器错误';
-    nav.style.color='var(--red)';
+    // Failed to fetch = likely local file:// or network issue, show neutral
+    if(e.name==='AbortError'){
+      dot.style.background='var(--red)';
+      txt.style.color='var(--red)';
+      txt.textContent='连接超时';
+    } else {
+      dot.style.background='var(--text-dim,#5a7a8a)';
+      txt.style.color='var(--text2,#7090a8)';
+      txt.textContent='无法检测';
+    }
   }
 }
 

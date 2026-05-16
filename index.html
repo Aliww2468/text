@@ -9,6 +9,10 @@
 
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
+  --green:#4caf88;
+  --red:#e05050;
+  --cyan:#4ab3e8;
+  --text-dim:#4a6070;
   --bg:#0a1628;
   --bg2:#0d1c30;
   --bg3:#111f35;
@@ -108,8 +112,8 @@ nav{
 .hero-overlay{
   position:absolute;inset:0;
   background:
-    linear-gradient(90deg, rgba(8,20,40,0.95) 0%, rgba(8,20,40,0.7) 45%, transparent 70%),
-    linear-gradient(0deg, rgba(8,20,40,0.6) 0%, transparent 40%);
+    linear-gradient(90deg, rgba(8,20,40,0.92) 0%, rgba(8,20,40,0.6) 40%, rgba(8,20,40,0.2) 70%, transparent 100%),
+    linear-gradient(0deg, rgba(8,20,40,0.85) 0%, rgba(8,20,40,0.3) 40%, transparent 70%);
 }
 
 .hero-content{
@@ -393,6 +397,8 @@ footer{
     font-family: 'Rajdhani', 'Microsoft YaHei','PingFang SC','Hiragino Sans GB','WenQuanYi Micro Hei',sans-serif;
   }
 
+  @keyframes breathe{0%,100%{transform:scale(1);opacity:0.5;}50%{transform:scale(2.4);opacity:0;}}
+  .dot-breathing{animation:breathe 2s ease-in-out infinite;}
 </style>
 </head>
 <body>
@@ -410,7 +416,9 @@ footer{
   <div style="font-size:13px;color:#4a6070;max-width:420px;" id="fatalMsg"></div>
   <a href="https://robertsspaceindustries.com/en/orgs/11111111" target="_blank" style="color:#4ab3e8;font-size:12px;">直接访问 RSI 官方页面</a>
 </div>
-<style>@keyframes ldspin{to{transform:rotate(360deg);}}</style>
+<style>@keyframes ldspin{to{transform:rotate(360deg);}}  @keyframes breathe{0%,100%{transform:scale(1);opacity:0.5;}50%{transform:scale(2.4);opacity:0;}}
+  .dot-breathing{animation:breathe 2s ease-in-out infinite;}
+</style>
 
 <div class="top-bar">ROBERTS SPACE INDUSTRIES®</div>
 
@@ -426,7 +434,13 @@ footer{
   </div>
   <div class="nav-right">
     <span class="nav-icon nav-status-item">⚙ <span id="navVersion">LiVE 4.8.0</span></span>
-    <span class="nav-icon nav-status-item"><span id="serverDot">●</span> <span id="serverTxt">检测中...</span></span>
+    <span class="nav-icon nav-status-item" style="display:flex;align-items:center;gap:6px;">
+      <span id="serverDot" style="position:relative;width:8px;height:8px;flex-shrink:0;display:inline-block;">
+        <span id="serverRing" style="position:absolute;inset:0;border-radius:50%;background:#4a6070;opacity:0.4;"></span>
+        <span id="serverCore" style="position:absolute;inset:1px;border-radius:50%;background:#4a6070;"></span>
+      </span>
+      <span id="serverTxt" style="color:#4a6070;">检测中...</span>
+    </span>
     <a class="nav-cta" onclick="showMainPage('join')" style="cursor:pointer;">立即加入</a>
   </div>
 </nav>
@@ -1048,26 +1062,33 @@ async function fetchNavStatus(){
     const pr = await fetch(`https://api.starcitizen-api.com/${API_KEY}/v1/cache/organization/${ORG_SID}`,{signal:controller.signal});
     clearTimeout(timer);
     const pd = await pr.json();
+    const ring = document.getElementById('serverRing');
+    const core = document.getElementById('serverCore');
+    const setDot = function(color){
+      if(ring){ ring.style.background=color; ring.classList.add('dot-breathing'); }
+      if(core) core.style.background=color;
+      txt.style.color=color;
+    };
     if(pd?.success){
-      dot.style.background='var(--green)';
-      dot.style.color='var(--green)';
-      txt.style.color='var(--green)';
+      setDot('#4caf88');
       txt.textContent='服务器正常';
     } else {
-      dot.style.background='var(--gold)';
-      dot.style.color='var(--gold)';
-      txt.style.color='var(--gold)';
+      setDot('#c8a040');
       txt.textContent='状态异常';
     }
   } catch(e){
-    // Failed to fetch = likely local file:// or network issue, show neutral
+    const ring = document.getElementById('serverRing');
+    const core = document.getElementById('serverCore');
     if(e.name==='AbortError'){
-      dot.style.background='var(--red)';
-      txt.style.color='var(--red)';
+      if(ring){ ring.style.background='#e05050'; ring.classList.add('dot-breathing'); }
+      if(core) core.style.background='#e05050';
+      txt.style.color='#e05050';
       txt.textContent='连接超时';
     } else {
-      dot.style.background='var(--text-dim,#5a7a8a)';
-      txt.style.color='var(--text2,#7090a8)';
+      // Local file:// — don't show error
+      if(ring){ ring.style.background='#4a6070'; ring.classList.remove('dot-breathing'); }
+      if(core) core.style.background='#4a6070';
+      txt.style.color='#4a6070';
       txt.textContent='无法检测';
     }
   }

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>华夏舰队 · RSI 风格预览</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;600&family=ZCOOL+XiaoWei&display=swap');
 
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
@@ -23,7 +23,7 @@
   --border2:rgba(74,179,232,0.2);
 }
 
-body{font-family:'Titillium Web',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
+body{font-family:'Rajdhani','Microsoft YaHei','PingFang SC','Hiragino Sans GB','WenQuanYi Micro Hei',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
 
 /* ── TOP ANNOUNCEMENT BAR ── */
 .top-bar{
@@ -44,8 +44,8 @@ nav{
   padding:0 1.5rem;gap:2rem;
 }
 .nav-logo{
-  font-size:24px;font-weight:700;color:#4ab3e8;
-  font-style:italic;letter-spacing:-1px;margin-right:1rem;
+  font-size:18px;font-weight:700;color:#4ab3e8;
+  letter-spacing:1px;margin-right:1rem;
   flex-shrink:0;
 }
 .nav-links{display:flex;gap:0;flex:1;}
@@ -59,6 +59,9 @@ nav{
 .nav-links a:hover{color:#fff;background:rgba(255,255,255,0.04);}
 .nav-links a.active{border-bottom-color:var(--blue-bright);color:#fff;}
 .nav-arrow{font-size:8px;opacity:0.6;}
+.nav-links{display:flex;gap:0;flex:1;}
+.nav-links a{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:rgba(200,216,232,0.6);text-decoration:none;padding:0 1.1rem;height:56px;display:flex;align-items:center;border-bottom:2px solid transparent;transition:all 0.18s;cursor:pointer;white-space:nowrap;}
+.nav-links a:hover,.nav-links a.active{color:#fff;border-bottom-color:#4ab3e8;}
 .nav-right{display:flex;align-items:center;gap:1rem;flex-shrink:0;}
 .nav-cta{
   background:var(--blue-btn);color:#fff;
@@ -72,7 +75,7 @@ nav{
 
 /* ── HERO ── */
 .hero{
-  position:relative;height:calc(100vh - 84px);
+  position:relative;height:clamp(320px, 50vh, 520px);
   overflow:hidden;
 }
 .hero-bg{
@@ -111,8 +114,10 @@ nav{
 
 .hero-content{
   position:relative;z-index:1;
-  height:100%;display:flex;flex-direction:column;justify-content:flex-end;
-  padding:0 3rem 5rem;max-width:600px;
+  height:100%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;
+  padding:2rem;max-width:100%;
 }
 .hero-tag{
   font-size:11px;letter-spacing:3px;text-transform:uppercase;
@@ -181,7 +186,7 @@ nav{
 .sec-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--blue-bright);white-space:nowrap;}
 
 /* Card grid */
-.card-grid-wrap{overflow:visible;}.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);width:auto;}
+.card-grid-wrap{position:relative;height:500px;overflow:hidden;}.card-grid{display:block;width:100%;background:transparent;gap:0;}.card{position:absolute;width:68%;left:50%;transform:translateX(-50%);border-radius:4px;cursor:grab;user-select:none;}.card:active{cursor:grabbing;}
 .card{
   background:var(--bg2);padding:0;
   display:flex;flex-direction:column;overflow:hidden;
@@ -279,6 +284,8 @@ footer{
     /* Nav */
     nav{padding:0 1rem;gap:1rem;}
     .nav-links{display:none;}
+    .nav-links{display:none;}
+    .nav-links{display:none;}
     .nav-right{gap:0.5rem;}
     .nav-icon{display:none;}
     .nav-status-item{display:flex;font-size:10px;}
@@ -311,8 +318,8 @@ footer{
     .section{padding:3rem 1.25rem;}
 
     /* Card grid — horizontal scroll on mobile */
-    .card-grid-wrap{position:relative;height:480px;overflow:hidden;}
-    .card-grid{display:block;width:100%;background:transparent;gap:0;}
+    .card-grid-wrap{height:480px;}
+    .card{width:82%;}
     .card{
       position:absolute;width:82%;left:50%;
       transform:translateX(-50%);
@@ -341,78 +348,124 @@ footer{
     .footer-bottom-links{flex-wrap:wrap;justify-content:center;}
   }
 
+
+  .rsi-page{display:none;}
+  .org-info-card{background:var(--bg2);border:1px solid var(--border);padding:1rem 1.25rem;}
+  .org-info-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:4px;}
+  .org-info-val{font-size:14px;font-weight:600;color:#e8f4ff;}
+  .website-card{display:flex;flex-direction:column;align-items:center;text-align:center;background:var(--bg2);border:1px solid var(--border);padding:1.5rem 1rem;text-decoration:none;transition:border-color 0.2s;cursor:pointer;position:relative;}
+  .website-card:hover{border-color:rgba(74,179,232,0.4);background:var(--bg3);}
+  .website-icon{width:56px;height:56px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:0.75rem;overflow:hidden;}
+  .website-icon img{width:100%;height:100%;object-fit:cover;}
+  .website-info{flex:1;width:100%;}
+  .website-name{font-size:13px;font-weight:600;color:#e8f4ff;margin-bottom:4px;}
+  .website-desc{font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:6px;}
+  .website-url{font-size:9px;letter-spacing:1px;color:var(--blue-bright);}
+  .website-arrow{font-size:14px;color:var(--border);margin-top:0.5rem;transition:color 0.2s;}
+  .website-card:hover .website-arrow{color:var(--blue-bright);}
+  .member-grid-rsi{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0.75rem;}
+  .member-card-rsi{background:var(--bg2);border:1px solid var(--border);padding:1rem;text-align:center;}
+  .member-card-rsi:hover{border-color:rgba(74,179,232,0.3);}
+  .m-avatar-rsi{width:48px;height:48px;border-radius:50%;object-fit:cover;border:1px solid var(--border);margin:0 auto 0.5rem;display:block;}
+  .m-avatar-ph-rsi{width:48px;height:48px;border-radius:50%;border:1px solid var(--border);background:rgba(74,179,232,0.07);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--blue-bright);margin:0 auto 0.5rem;}
+  .m-handle-rsi{font-size:11px;font-weight:600;color:#e8f4ff;margin-bottom:2px;}
+  .m-rank-rsi{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text2);}
+  .pg-btn-rsi{font-size:10px;letter-spacing:1px;padding:5px 12px;border:1px solid var(--border);color:var(--text2);cursor:pointer;background:transparent;transition:all 0.2s;}
+  .pg-btn-rsi:hover,.pg-btn-rsi.active{border-color:var(--blue-bright);color:var(--blue-bright);}
+
+
+  /* Orbitron for titles & nav */
+  .hero-tag, .stat-n, .sec-label, .sec-hd .sec-label,
+  .nav-logo, .footer-logo, .join-title,
+  .card-title, .website-name,
+  .top-bar, .footer-col-title {
+    font-family: 'Orbitron', 'Microsoft YaHei','PingFang SC','Hiragino Sans GB','WenQuanYi Micro Hei',sans-serif;
+  }
+  /* Chinese titles use Noto Sans SC */
+  .hero-title{font-family:'Noto Sans SC',sans-serif;font-weight:500;letter-spacing:6px;font-size:clamp(28px,4vw,52px);}
+  .hero-subtitle,.hero-desc-text,#heroDesc{font-family:'Microsoft YaHei','PingFang SC','Hiragino Sans GB','WenQuanYi Micro Hei',sans-serif;font-weight:300;letter-spacing:1px;}
+  /* Noto Sans SC for body text */
+  .hero-subtitle, .hero-desc, .hero-desc-text, .card-desc, .card-tag,
+  .join-desc, .footer-tagline, .nav-links a,
+  .stat-l, .member-rank, .m-rank-rsi,
+  .footer-links a, .footer-bottom, .org-info-lbl,
+  .website-desc, .website-url {
+    font-family: 'Rajdhani', 'Microsoft YaHei','PingFang SC','Hiragino Sans GB','WenQuanYi Micro Hei',sans-serif;
+  }
+
 </style>
 </head>
 <body>
 
 <!-- Top bar -->
+<!-- Loading -->
+<div id="loadScreen" style="position:fixed;inset:0;z-index:500;background:#0a1628;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;transition:opacity 0.5s;">
+  <div style="width:48px;height:48px;border:2px solid rgba(255,255,255,0.1);border-top-color:#1e8bc3;border-radius:50%;animation:ldspin 0.9s linear infinite;"></div>
+  <div style="font-size:10px;letter-spacing:4px;color:#4ab3e8;">CONNECTING TO RSI</div>
+  <div style="font-size:20px;font-weight:200;color:#fff;letter-spacing:6px;" id="loadSid">···</div>
+  <div style="font-size:11px;color:#4a6070;letter-spacing:1px;" id="loadSub">正在拉取组织数据...</div>
+</div>
+<div id="fatalScreen" style="display:none;position:fixed;inset:0;z-index:500;background:#0a1628;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center;">
+  <div style="font-size:14px;color:#e05050;letter-spacing:2px;">数据加载失败</div>
+  <div style="font-size:13px;color:#4a6070;max-width:420px;" id="fatalMsg"></div>
+  <a href="https://robertsspaceindustries.com/en/orgs/11111111" target="_blank" style="color:#4ab3e8;font-size:12px;">直接访问 RSI 官方页面</a>
+</div>
+<style>@keyframes ldspin{to{transform:rotate(360deg);}}</style>
+
 <div class="top-bar">ROBERTS SPACE INDUSTRIES®</div>
 
 <!-- Nav -->
 <nav>
-  <div class="nav-logo">RSI</div>
+  <div class="nav-logo" id="navLogo" style="cursor:pointer;" onclick="showMainPage('home')">华夏</div>
   <div class="nav-links">
-    <a>游戏 <span class="nav-arrow">▼</span></a>
-    <a>舰队</a>
-    <a class="active">组织</a>
-    <a>成员</a>
-    <a>加入</a>
-    <a>网站</a>
+    <a onclick="showMainPage('home')" class="active" id="navHome">首页</a>
+    <a onclick="showMainPage('org')" id="navOrg">组织</a>
+    <a onclick="showMainPage('members')" id="navMembers">成员</a>
+    <a onclick="showMainPage('websites')" id="navWebsites">网站</a>
+    <a onclick="showMainPage('join')" id="navJoin">加入</a>
   </div>
   <div class="nav-right">
-    <span class="nav-icon nav-status-item">⚙ 版本 4.7.2</span>
-    <span class="nav-icon nav-status-item">● 服务器正常</span>
-    <a class="nav-cta">立即加入</a>
+    <span class="nav-icon nav-status-item">⚙ <span id="navVersion">LiVE 4.8.0</span></span>
+    <span class="nav-icon nav-status-item"><span id="serverDot">●</span> <span id="serverTxt">检测中...</span></span>
+    <a class="nav-cta" onclick="showMainPage('join')" style="cursor:pointer;">立即加入</a>
   </div>
 </nav>
+<!-- ═══════ PAGE: HOME ═══════ -->
+<div id="page-home" class="rsi-page" style="display:block;">
 
 <!-- Hero -->
 <div class="hero">
   <div class="hero-bg"></div>
-  <div class="hero-ship">
-    <div class="hero-ship-placeholder">
-      <div class="ship-icon">🚀</div>
-      <div class="ship-hint">此处可放舰船/组织图片</div>
-    </div>
-  </div>
   <div class="hero-overlay"></div>
   <div class="hero-content">
-    <div class="hero-tag">STAR CITIZEN · 华夏舰队</div>
-    <div class="hero-title">华夏舰队</div>
-    <div class="hero-subtitle">龙旗招展，星海为盟</div>
-  </div>
-  <div class="hero-thumbs">
-    <div class="thumb-nav">‹</div>
-    <a class="hero-thumb">
-      <div class="thumb-img">🛡</div>
-      <div class="thumb-text"><div class="thumb-title">组织简介</div><div class="thumb-sub">了解华夏舰队</div></div>
-    </a>
-    <a class="hero-thumb active">
-      <div class="thumb-img">👥</div>
-      <div class="thumb-text"><div class="thumb-title">成员名录</div><div class="thumb-sub">341 名在籍成员</div></div>
-    </a>
-    <a class="hero-thumb">
-      <div class="thumb-img">⚔</div>
-      <div class="thumb-text"><div class="thumb-title">舰队历史</div><div class="thumb-sub">纪元 2945 · 启航</div></div>
-    </a>
-    <a class="hero-thumb">
-      <div class="thumb-img">🌐</div>
-      <div class="thumb-text"><div class="thumb-title">相关工具</div><div class="thumb-sub">8 个实用网站</div></div>
-    </a>
-    <div class="thumb-nav">›</div>
+    <div id="heroLogo" style="margin-bottom:1rem;"></div>
+    <div class="hero-title" id="heroTitle" style="margin-bottom:0.5rem;">···</div>
+    <div id="heroSidDisplay" style="font-size:10px;letter-spacing:5px;color:rgba(74,179,232,0.6);margin-bottom:1rem;font-family:'Orbitron',sans-serif;">SID · 11111111</div>
+    <div class="hero-subtitle" id="heroDesc" style="font-size:13px;max-width:480px;opacity:0.7;"></div>
   </div>
 </div>
 
 <!-- Stats -->
 <div class="stats">
-  <div class="stat"><span class="stat-n">341</span><span class="stat-l">在籍成员</span></div>
-  <div class="stat"><span class="stat-n">Faith</span><span class="stat-l">组织类型</span></div>
-  <div class="stat"><span class="stat-n">Hardcore</span><span class="stat-l">参与程度</span></div>
-  <div class="stat"><span class="stat-n">开放中</span><span class="stat-l">招募状态</span></div>
-  <div class="stat"><span class="stat-n">4.7.2</span><span class="stat-l">当前版本</span></div>
+  <div class="stat"><span class="stat-n" id="sMembers">—</span><span class="stat-l">在籍成员</span></div>
+  <div class="stat"><span class="stat-n" id="sType">—</span><span class="stat-l">组织类型</span></div>
+  <div class="stat"><span class="stat-n" id="sCommit">—</span><span class="stat-l">参与程度</span></div>
+  <div class="stat"><span class="stat-n" id="sRecruit" style="color:#4caf88;">—</span><span class="stat-l">招募状态</span></div>
+  <div class="stat"><span class="stat-n" id="sVersion">LiVE 4.8.0</span><span class="stat-l">当前版本</span></div>
 </div>
 
-<!-- Content cards -->
+<!-- 公告栏 -->
+<div style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:1.5rem 3rem;">
+  <div style="max-width:1300px;margin:0 auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+      <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--blue-bright);">公告栏</div>
+      <div style="font-size:11px;color:var(--text2);" id="announceCount"></div>
+    </div>
+    <div id="announceList" style="font-size:13px;color:var(--text2);">加载中...</div>
+  </div>
+</div>
+
+<!-- 组织动态卡片 -->
 <div class="section-full">
   <div class="section">
     <div class="sec-hd"><div class="sec-line"></div><div class="sec-label">组织动态</div><div class="sec-line"></div></div>
@@ -424,7 +477,7 @@ footer{
           <span class="card-tag">公告</span>
           <div class="card-title">欢迎加入华夏舰队</div>
           <div class="card-desc">龙旗招展，星海为盟！欢迎加入华夏舰队，这里有并肩作战的袍泽，有探索未知的征途。</div>
-          <a class="card-link">查看详情 ›</a>
+          <a class="card-link" onclick="showMainPage('join')" style="cursor:pointer;">查看加入 ›</a>
         </div>
       </div>
       <div class="card">
@@ -433,7 +486,7 @@ footer{
           <span class="card-tag">舰队历史</span>
           <div class="card-title">纪元 2945 · 启航</div>
           <div class="card-desc">初代舰长K神率百名同胞携三艘改装护卫舰启程，以"守华夏之魂，拓星海之土"为誓言。</div>
-          <a class="card-link">阅读历史 ›</a>
+          <a class="card-link" onclick="showMainPage('org')" style="cursor:pointer;">阅读历史 ›</a>
         </div>
       </div>
       <div class="card">
@@ -442,51 +495,11 @@ footer{
           <span class="card-tag">工具推荐</span>
           <div class="card-title">星际实用工具合集</div>
           <div class="card-desc">精选 8 个 Star Citizen 实用工具，包含 DPS 计算、装备查询、蓝图规划、CCU 链路等。</div>
-          <a class="card-link">查看工具 ›</a>
+          <a class="card-link" onclick="showMainPage('websites')" style="cursor:pointer;">查看工具 ›</a>
         </div>
       </div>
     </div>
-  </div>
-</div>
-
-<!-- Members preview -->
-<div class="section">
-  <div class="sec-hd"><div class="sec-line"></div><div class="sec-label">核心成员</div><div class="sec-line"></div></div>
-  <div style="border:1px solid var(--border);">
-    <div class="member-row">
-      <div class="member-info">
-        <div class="member-avatar">K</div>
-        <div><div class="member-name">K神</div><div class="member-rank">COMMANDER · 总司令</div></div>
-      </div>
-      <div class="member-stars">★★★★★</div>
     </div>
-    <div class="member-row">
-      <div class="member-info">
-        <div class="member-avatar">A</div>
-        <div><div class="member-name">成员示例</div><div class="member-rank">OFFICER · 军官</div></div>
-      </div>
-      <div class="member-stars">★★★★☆</div>
-    </div>
-    <div class="member-row">
-      <div class="member-info">
-        <div class="member-avatar">B</div>
-        <div><div class="member-name">成员示例</div><div class="member-rank">MEMBER · 成员</div></div>
-      </div>
-      <div class="member-stars">★★★☆☆</div>
-    </div>
-    <div style="padding:1rem 1.5rem;text-align:center;border-top:1px solid var(--border);">
-      <a style="font-size:12px;color:var(--blue-bright);cursor:pointer;letter-spacing:1px;">查看全部 341 名成员 ›</a>
-    </div>
-  </div>
-</div>
-
-<!-- Join CTA -->
-<div class="join-section">
-  <div class="join-title">加入华夏舰队</div>
-  <div class="join-desc">龙旗招展，星海为盟。无论你是老将还是新星，华夏舰队都欢迎你的到来。</div>
-  <div class="join-btns">
-    <a class="hero-btn"><span class="hero-btn-arrow">›</span> RSI 官方申请</a>
-    <a class="hero-btn" style="background:transparent;border:1px solid rgba(255,255,255,0.2);">加入 QQ 群</a>
   </div>
 </div>
 
@@ -494,40 +507,733 @@ footer{
 <footer>
   <div class="footer-main">
     <div class="footer-brand">
-      <div class="footer-logo">华夏舰队</div>
+      <div class="footer-logo" id="footerName">华夏舰队</div>
       <div class="footer-tagline">Star Citizen 华人精英组织 · 守华夏之魂，拓星海之土</div>
     </div>
     <div>
       <div class="footer-col-title">导航</div>
       <div class="footer-links">
-        <a>首页</a><a>组织详情</a><a>成员名录</a><a>相关网站</a><a>申请加入</a>
+        <a onclick="showMainPage('home')" style="cursor:pointer;">首页</a>
+        <a onclick="showMainPage('org')" style="cursor:pointer;">组织详情</a>
+        <a onclick="showMainPage('members')" style="cursor:pointer;">成员名录</a>
+        <a onclick="showMainPage('websites')" style="cursor:pointer;">相关网站</a>
+        <a onclick="showMainPage('join')" style="cursor:pointer;">申请加入</a>
       </div>
     </div>
     <div>
       <div class="footer-col-title">外部链接</div>
       <div class="footer-links">
-        <a>RSI 官方页面</a><a>Erkul DPS</a><a>UEX Corp</a><a>Star Citizen API</a>
+        <a id="rsiBtn" href="https://robertsspaceindustries.com/en/orgs/11111111" target="_blank">RSI 官方页面</a>
+        <a href="https://www.erkul.games" target="_blank">Erkul DPS</a>
+        <a href="https://uexcorp.space" target="_blank">UEX Corp</a>
       </div>
     </div>
     <div class="footer-cta-col">
       <div class="footer-col-title">立即加入</div>
-      <a class="hero-btn" style="font-size:12px;padding:10px 20px;">› 申请加入</a>
-      <a class="hero-btn" style="font-size:12px;padding:10px 20px;background:transparent;border:1px solid var(--border);">加入 QQ 群</a>
+      <a class="hero-btn" id="joinBtn" href="https://robertsspaceindustries.com/en/orgs/11111111" target="_blank" style="font-size:12px;padding:10px 20px;">› RSI 申请</a>
+      <a class="hero-btn" href="https://qm.qq.com/q/8wCNiHactG" target="_blank" style="font-size:12px;padding:10px 20px;background:transparent;border:1px solid var(--border);">加入 QQ 群</a>
     </div>
   </div>
   <div class="footer-bottom">
-    <span>数据来源：starcitizen-api.com & robertsspaceindustries.com · 华夏舰队非官方组织页面</span>
+    <span>数据来源：starcitizen-api.com & robertsspaceindustries.com · 华夏舰队非官方页面</span>
     <div class="footer-bottom-links">
-      <a>RSI 官方</a><a>隐私政策</a><a>服务条款</a>
+      <a href="https://robertsspaceindustries.com/en/orgs/11111111" target="_blank">RSI 官方</a>
     </div>
   </div>
 </footer>
+</div><!-- end page-home -->
 
+<!-- ═══════ PAGE: ORG ═══════ -->
+<div id="page-org" class="rsi-page" style="display:none;">
+<div id="orgBannerWrap"></div>
+<div class="section">
+  <div class="sec-hd"><div class="sec-line"></div><div class="sec-label">组织详情</div><div class="sec-line"></div></div>
+  <div id="orgInfoGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem;margin-bottom:1.5rem;"></div>
+  <div id="orgHeadline" style="display:none;background:var(--bg2);border:1px solid var(--border);padding:1.5rem;font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:2rem;"></div>
+
+  <div class="sec-hd"><div class="sec-line"></div><div class="sec-label">舰队历史</div><div class="sec-line"></div></div>
+  <div style="background:var(--bg2);border:1px solid var(--border);padding:2rem;font-size:13px;color:var(--text2);line-height:2;">
+    <p style="margin-bottom:1.25rem;font-weight:600;color:#e8f4ff;">纪元2945·启航：龙出东方，星落尘寰</p>
+    <p style="margin-bottom:1.25rem;">当UEE（地球联合帝国）的疆域在银河边缘显露疲态，一群流淌着华夏血脉的星际公民，于地球亚洲轨道站缔结盟约——华夏舰队正式成立。初代舰长K神，曾是UEE舰队王牌飞行员，率百名同胞携三艘改装护卫舰"昆仑""泰山""秦岭"启程，以"守华夏之魂，拓星海之土"为誓言。</p>
+    <p style="margin-bottom:1.25rem;font-weight:600;color:#e8f4ff;">纪元2948·拓土：星轨为脉，筑垒安邦</p>
+    <p style="margin-bottom:1.25rem;">随着实力壮大，舰队在"玄武星域"建立首个永久性基地"昆仑堡"，成功发现"朱雀""白虎"两大未登记跳跃点，为人类开辟两条全新星际航线。</p>
+    <p style="font-weight:600;color:#e8f4ff;">纪元2960·传承：薪火不灭，星海永续</p>
+  </div>
+</div>
+<footer style="margin-top:auto;">
+  <div class="footer-bottom" style="padding:1rem 3rem;">
+    <span>← <a onclick="showMainPage('home')" style="cursor:pointer;color:var(--blue-bright);">返回首页</a></span>
+  </div>
+</footer>
+</div><!-- end page-org -->
+
+<!-- ═══════ PAGE: MEMBERS ═══════ -->
+<div id="page-members" class="rsi-page" style="display:none;">
+<div class="section">
+  <div class="sec-hd"><div class="sec-line"></div><div class="sec-label">成员名录</div><div class="sec-line"></div></div>
+  <!-- Filter bar -->
+  <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;margin-bottom:1.25rem;">
+    <input id="filterSearch" type="text" placeholder="搜索成员 ID..." oninput="applyFilter()" style="flex:1;min-width:160px;background:rgba(30,139,195,0.06);border:1px solid rgba(74,179,232,0.2);color:#c8d8e8;font-size:13px;padding:7px 12px;outline:none;">
+    <select id="filterRank" onchange="applyFilter()" style="background:#0d1c30;border:1px solid rgba(74,179,232,0.2);color:#c8d8e8;font-size:13px;padding:7px 10px;outline:none;"><option value="">全部职衔</option></select>
+    <select id="filterStars" onchange="applyFilter()" style="background:#0d1c30;border:1px solid rgba(74,179,232,0.2);color:#c8d8e8;font-size:13px;padding:7px 10px;outline:none;">
+      <option value="">全部星级</option>
+      <option value="5">★★★★★</option><option value="4">★★★★</option>
+      <option value="3">★★★</option><option value="2">★★</option>
+      <option value="1">★</option><option value="0">无星级</option>
+    </select>
+    <select id="sortBy" onchange="applyFilter()" style="background:#0d1c30;border:1px solid rgba(74,179,232,0.2);color:#c8d8e8;font-size:13px;padding:7px 10px;outline:none;">
+      <option value="">默认排序</option>
+      <option value="stars-desc" selected>星级 高→低</option>
+      <option value="stars-asc">星级 低→高</option>
+      <option value="name-asc">ID A→Z</option>
+    </select>
+    <span id="filterCount" style="font-size:11px;color:var(--text2);margin-left:auto;"></span>
+  </div>
+  <div id="memberContent" style="min-height:200px;">
+    <div style="text-align:center;padding:3rem;color:var(--text2);">加载中...</div>
+  </div>
+  <div id="pagi" style="display:flex;gap:0.5rem;justify-content:center;margin-top:1.25rem;flex-wrap:wrap;"></div>
+  <div id="pgInfo" style="font-size:11px;color:var(--text2);text-align:center;margin-top:0.6rem;letter-spacing:1px;"></div>
+  <div id="cacheHint" style="font-size:11px;color:var(--text2);text-align:center;margin-top:0.4rem;"></div>
+</div>
+</div><!-- end page-members -->
+
+<!-- ═══════ PAGE: WEBSITES ═══════ -->
+<div id="page-websites" class="rsi-page" style="display:none;">
+<div class="section">
+  <div class="sec-hd"><div class="sec-line"></div><div class="sec-label">相关网站</div><div class="sec-line"></div></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem;">
+    <a class="website-card" href="https://www.erkul.games/live/calculator" target="_blank">
+      <div class="website-icon"><img src="https://www.erkul.games/favicon.ico" onerror="this.outerHTML='🎯'"></div>
+      <div class="website-info"><div class="website-name">Erkul DPS</div><div class="website-desc">武器 DPS 查询工具</div><div class="website-url">erkul.games</div></div>
+      <div class="website-arrow">→</div>
+    </a>
+    <a class="website-card" href="https://www.spviewer.eu/" target="_blank">
+      <div class="website-icon"><img src="https://www.spviewer.eu/favicon.ico" onerror="this.outerHTML='🔍'"></div>
+      <div class="website-info"><div class="website-name">SPViewer</div><div class="website-desc">详细装备数据查询</div><div class="website-url">spviewer.eu</div></div>
+      <div class="website-arrow">→</div>
+    </a>
+    <a class="website-card" href="https://scmdb.net/" target="_blank">
+      <div class="website-icon"><img src="https://scmdb.net/favicon.ico" onerror="this.outerHTML='📋'"></div>
+      <div class="website-info"><div class="website-name">SCMDB</div><div class="website-desc">任务蓝图数据库</div><div class="website-url">scmdb.net</div></div>
+      <div class="website-arrow">→</div>
+    </a>
+    <a class="website-card" href="https://uexcorp.space/" target="_blank">
+      <div class="website-icon"><img src="https://uexcorp.space/favicon.ico" onerror="this.outerHTML='💱'"></div>
+      <div class="website-info"><div class="website-name">UEX Corp</div><div class="website-desc">游戏币交易平台</div><div class="website-url">uexcorp.space</div></div>
+      <div class="website-arrow">→</div>
+    </a>
+    <a class="website-card" href="https://crafter.infinityfreeapp.com/" target="_blank">
+      <div class="website-icon"><img src="https://crafter.infinityfreeapp.com/favicon.ico" onerror="this.outerHTML='🔧'"></div>
+      <div class="website-info"><div class="website-name">SC Crafter</div><div class="website-desc">蓝图材料对比工具</div><div class="website-url">crafter.infinityfreeapp.com</div></div>
+      <div class="website-arrow">→</div>
+    </a>
+    <a class="website-card" href="https://finder.grakeinterplanetary.com/" target="_blank">
+      <div class="website-icon"><img src="https://finder.grakeinterplanetary.com/favicon.ico" onerror="this.outerHTML='🔭'"></div>
+      <div class="website-info"><div class="website-name">星际寻物</div><div class="website-desc">物品获取位置查询</div><div class="website-url">finder.grakeinterplanetary.com</div></div>
+      <div class="website-arrow">→</div>
+    </a>
+    <a class="website-card" href="https://ccugame.app/" target="_blank">
+      <div class="website-icon"><img src="https://ccugame.app/favicon.ico" onerror="this.outerHTML='🚀'"></div>
+      <div class="website-info"><div class="website-name">CCU Game</div><div class="website-desc">CCU 升级链路规划</div><div class="website-url">ccugame.app</div></div>
+      <div class="website-arrow">→</div>
+    </a>
+    <a class="website-card" href="https://www.kitsuneint.com/%E6%94%BB%E7%95%A5" target="_blank">
+      <div class="website-icon"><img src="https://www.kitsuneint.com/favicon.ico" onerror="this.outerHTML='📖'"></div>
+      <div class="website-info"><div class="website-name">攻略一图流</div><div class="website-desc">中文攻略合集</div><div class="website-url">kitsuneint.com</div></div>
+      <div class="website-arrow">→</div>
+    </a>
+  </div>
+</div>
+</div><!-- end page-websites -->
+
+<!-- ═══════ PAGE: JOIN ═══════ -->
+<div id="page-join" class="rsi-page" style="display:none;">
+<div class="join-section">
+  <div class="join-title" id="joinOrgName">加入华夏舰队</div>
+  <div class="join-desc">龙旗招展，星海为盟。无论你是老将还是新星，华夏舰队都欢迎你的到来。</div>
+  <div id="recruitBadge" style="margin-bottom:1rem;"></div>
+  <div class="join-btns">
+    <a class="hero-btn" id="joinBtnJoin" href="https://robertsspaceindustries.com/en/orgs/11111111" target="_blank"><span class="hero-btn-arrow">›</span> RSI 官方申请</a>
+    <a class="hero-btn" href="https://qm.qq.com/q/8wCNiHactG" target="_blank" style="background:transparent;border:1px solid rgba(255,255,255,0.2);">加入 QQ 群</a>
+  </div>
+  <div style="margin-top:3rem;max-width:500px;margin-left:auto;margin-right:auto;text-align:left;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);padding:1.5rem;">
+    <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--blue-bright);margin-bottom:1rem;">申请步骤</div>
+    <div style="font-size:13px;color:var(--text2);line-height:2;">
+      <div style="margin-bottom:0.5rem;"><span style="color:var(--blue-bright);margin-right:0.75rem;">01</span>访问该组织的 RSI 官方页面</div>
+      <div style="margin-bottom:0.5rem;"><span style="color:var(--blue-bright);margin-right:0.75rem;">02</span>点击 <strong style="color:#e8f4ff;">"Apply to Join"</strong> 按钮</div>
+      <div><span style="color:var(--blue-bright);margin-right:0.75rem;">03</span>等待管理员审核通过</div>
+    </div>
+  </div>
+</div>
+</div><!-- end page-join -->
 
 <script>
-(function(){
-  if(window.innerWidth > 768) return;
+window.onerror = function(msg, src, line, col, err){
+  var fs = document.getElementById('fatalScreen');
+  var fm = document.getElementById('fatalMsg');
+  if(fs && fm){
+    fm.textContent = 'JS错误: ' + msg + ' (第' + line + '行)';
+    fs.style.display = 'flex';
+    document.getElementById('loadScreen') && (document.getElementById('loadScreen').style.display = 'none');
+  }
+  console.error(msg, src, line, col, err);
+  return true;
+};
 
+const API_KEY = '4zMH84ApPywjKTR3fnEn5zGq8f4SKSgz';
+const ORG_SID = '11111111';
+const BASE = `https://api.starcitizen-api.com/${API_KEY}/v1/live`;
+// 填入你的 Cloudflare Worker URL（部署 worker.js 后获得）
+const PROXY_BASE = ''; // 例如：https://sc-proxy.yourname.workers.dev
+
+let memberCache = {}, curPage = 1, orgTotalMembers = 0;
+
+// HTML entity decoder — fixes garbled text from RSI API
+function decode(str){
+  if(!str) return str;
+  // Fix mojibake: UTF-8 bytes misread as latin1 (e.g. "ä¸­æ–‡" -> "中文")
+  try {
+    const bytes = Uint8Array.from(str.split('').map(c => c.charCodeAt(0)));
+    const fixed = new TextDecoder('utf-8').decode(bytes);
+    if(!fixed.includes('\uFFFD')) str = fixed;
+  } catch(e){}
+  // Decode HTML entities (&amp; &#233; etc.)
+  const el = document.createElement('textarea');
+  el.innerHTML = str;
+  return el.value;
+}
+
+// Stars
+
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(el)el.classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='members' && !memberCache['all']) loadMembers(1);
+
+}
+
+async function apiGet(endpoint){
+  const r = await fetch(`${BASE}/${endpoint}`);
+  if(!r.ok) throw new Error(`HTTP ${r.status}`);
+  const d = await r.json();
+  if(!d.success && d.message) throw new Error(d.message);
+  return d.data;
+}
+
+function renderOrg(d){
+  // Save for org page
+  window._orgData = d;
+
+  // RSI hero
+  const heroLogo = document.getElementById('heroLogo');
+  if(heroLogo && d.logo) heroLogo.innerHTML = '<img src="'+d.logo+'" style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:2px solid rgba(74,179,232,0.3);box-shadow:0 0 30px rgba(74,179,232,0.15);" onerror="this.remove()">';
+
+
+  const name = decode(d.name || ORG_SID);
+  (document.getElementById('loadSid')||{}).textContent = name;
+  const rsiUrl = d.url || `https://robertsspaceindustries.com/en/orgs/${ORG_SID}`;
+
+  // Nav & footer
+  (document.getElementById('navLogo')||{}).textContent = ''; const em = document.createElement('em'); em.textContent = name; (document.getElementById('navLogo')||{}).appendChild(em);
+  (document.getElementById('footerName')||{}).textContent = name + ' · RSI ORG';
+
+
+  // Hero logo
+  const lw = document.getElementById('heroLogo');
+  if(d.logo){
+    lw.innerHTML=`<img src="${d.logo}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid rgba(200,169,110,0.4);box-shadow:0 0 20px rgba(200,169,110,0.15);" onerror="this.outerHTML='<div style=width:72px;height:72px;border-radius:50%;border:2px solid rgba(200,169,110,0.4);background:rgba(200,169,110,0.08);display:flex;align-items:center;justify-content:center;font-size:24px;color:#c8a96e>${name.charAt(0)}</div>'">`;
+  } else {
+    lw.innerHTML=`<div class="hero-logo-ph">${name.charAt(0)}</div>`;
+  }
+
+  (document.getElementById('heroTitle')||{}).textContent = name;
+  (document.getElementById('heroSidDisplay')||{}).textContent = 'SID · ' + ORG_SID;
+  (document.getElementById('heroSid')||{}).textContent = 'SID · ' + ORG_SID;
+
+  const plain = decode((d.headline?.plaintext||'').trim());
+  const desc = plain.length > 220 ? plain.slice(0,220)+'…' : plain;
+  // Typewriter effect for hero desc
+  (document.getElementById('heroDesc')||{}).textContent = desc || '— 暂无简介 —';
+
+  (document.getElementById('rsiBtn')||{}).href = rsiUrl;
+  (document.getElementById('joinBtn')||{}).href = rsiUrl;
+
+  // Stats
+  orgTotalMembers = parseInt(d.members) || 0;
+  const ARCHETYPE = { Corporation:'企业', PMC:'私人军事', Faith:'信仰', Organization:'组织', Club:'俱乐部' };
+  const COMMITMENT = { Hardcore:'硬核', Regular:'常规', Casual:'休闲' };
+  const LANG = { English:'英语', Chinese:'中文', French:'法语', German:'德语', Spanish:'西班牙语', Portuguese:'葡萄牙语', Russian:'俄语', Japanese:'日语', Korean:'韩语', Italian:'意大利语', Polish:'波兰语', Dutch:'荷兰语', Turkish:'土耳其语' };
+  (document.getElementById('sMembers')||{}).textContent = d.members ?? '-';
+  (document.getElementById('sType')||{}).textContent = ARCHETYPE[d.archetype] || d.archetype || '-';
+  (document.getElementById('sCommit')||{}).textContent = COMMITMENT[d.commitment] || d.commitment || '-';
+  (document.getElementById('sRecruit')||{}).textContent = '开放中';
+  (document.getElementById('sRecruit')||{style:{}}).style.color = 'var(--green)';
+  (document.getElementById('sLang')||{}).textContent = LANG[d.lang] || d.lang || '-';
+
+  // Banner
+  if(d.banner){
+    (document.getElementById('orgBannerWrap')||{}).innerHTML=`<div class="parallax-wrap"><img class="parallax-img" id="bannerImg" src="${d.banner}" onerror="this.parentNode.remove()"></div>`;
+    // Parallax scroll
+    const bannerWrap = document.getElementById('orgBannerWrap');
+    if(bannerWrap){
+      window.addEventListener('scroll', ()=>{
+        const img = document.getElementById('bannerImg');
+        if(!img) return;
+        const rect = bannerWrap.getBoundingClientRect();
+        const ratio = Math.max(0, Math.min(1, -rect.top / (rect.height + window.innerHeight)));
+        img.style.transform = `translateY(${ratio * 60 - 15}px)`;
+      }, {passive:true});
+    }
+  }
+
+  // Info cards
+  const cards = [
+    {l:'组织名称', v:name},
+    {l:'SID', v:ORG_SID, c:'cyan'},
+    {l:'类型', v:ARCHETYPE[d.archetype]||d.archetype||'-'},
+    {l:'参与程度', v:COMMITMENT[d.commitment]||d.commitment||'-', c:'gold'},
+    {l:'语言', v:LANG[d.lang]||d.lang||'-'},
+    {l:'成员数', v:(d.members??'-')+'人', c:'cyan'},
+    {l:'招募状态', v:'开放中', c:'green'},
+    {l:'角色扮演', v:d.roleplay?'是':'否'},
+  ];
+  const FOCUS = { 'Exploration':'探索', 'Freelancing':'自由佣兵', 'Trading':'贸易', 'Mining':'采矿', 'Bounty Hunting':'赏金猎人', 'Bounty_Hunting':'赏金猎人', 'Piracy':'海盗', 'Carebearing':'互助', 'Engineering':'工程', 'Resources':'资源', 'Transport':'运输', 'Scouting':'侦察', 'Medical':'医疗', 'Fuel':'燃料', 'Repair':'维修', 'Manufacturing':'制造', 'Research':'研究', 'Security':'安保', 'Military':'军事', 'Social':'社交', 'Roleplay':'角色扮演', 'Streaming':'直播', 'Recruiting':'招募' };
+  if(d.focus?.primary?.name) cards.push({l:'主要方向', v:FOCUS[d.focus.primary.name]||d.focus.primary.name});
+  if(d.focus?.secondary?.name) cards.push({l:'次要方向', v:FOCUS[d.focus.secondary.name]||d.focus.secondary.name});
+  (document.getElementById('infoGrid')||{}).innerHTML = cards.map(c=>
+    `<div class="info-card"><div class="info-lbl">${c.l}</div><div class="info-val ${c.c||''}">${c.v}</div></div>`
+  ).join('');
+
+  // Headline — update hero desc
+  if(plain){
+    const hb = document.getElementById('headlineBox');
+    if(hb){ hb.textContent = plain; hb.style.display='block'; }
+  }
+
+  // Recruit badge
+  (document.getElementById('recruitBadge')||{}).innerHTML = d.recruiting
+    ? `<div class="recruit-badge recruit-open"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;"></span>招募状态：开放中</div>`
+    : `<div class="recruit-badge recruit-open"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 1.5s infinite;"></span>招募状态：开放中</div>`;
+}
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+async function fetchPageWithRetry(p, retries = 6){
+  // Try live first, fall back to auto mode on failure
+  const modes = ['live', 'auto', 'cache'];
+  for(let i = 0; i < retries; i++){
+    const mode = modes[Math.min(i, modes.length - 1)];
+    try{
+      const r = await fetch(`https://api.starcitizen-api.com/${API_KEY}/v1/${mode}/organization_members/${ORG_SID}?page=${p}`);
+      if(!r.ok) throw new Error(`HTTP ${r.status}`);
+      const json = await r.json();
+      const batch = Array.isArray(json.data) ? json.data : [];
+      return batch;
+    } catch(e){
+      const wait = 2000 * (i + 1);
+      console.warn(`第${p}页第${i+1}次失败(${mode})，${wait}ms后重试:`, e.message);
+      if(i < retries - 1) await sleep(wait);
+    }
+  }
+  console.error(`第${p}页彻底失败，跳过`);
+  return [];
+}
+
+const CACHE_KEY = `sc_members_${ORG_SID}`;
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24小时
+
+function saveToLocal(members){
+  try{
+    localStorage.setItem(CACHE_KEY, JSON.stringify({
+      ts: Date.now(),
+      members
+    }));
+  } catch(e){ console.warn('localStorage 写入失败:', e); }
+}
+
+function loadFromLocal(){
+  try{
+    const raw = localStorage.getItem(CACHE_KEY);
+    if(!raw) return null;
+    const { ts, members } = JSON.parse(raw);
+    const age = Date.now() - ts;
+    if(age > CACHE_TTL) return null; // 过期
+    return { members, age };
+  } catch(e){ return null; }
+}
+
+function clearLocalCache(){
+  localStorage.removeItem(CACHE_KEY);
+  memberCache = {};
+  loadMembers(1);
+}
+
+function formatAge(ms){
+  const m = Math.floor(ms / 60000);
+  if(m < 60) return `${m} 分钟前`;
+  const h = Math.floor(m / 60);
+  return `${h} 小时前`;
+}
+
+async function loadMembers(page){
+  if(memberCache['all']){ renderMembers(memberCache['all']); return; }
+
+  // Try localStorage first
+  const cached = loadFromLocal();
+  if(cached){
+    memberCache['all'] = cached.members;
+    renderMembers(cached.members);
+    (document.getElementById('cacheHint')||{}).innerHTML =
+      `<span style="color:var(--text-dim);font-size:10px;letter-spacing:1px">缓存于 ${formatAge(cached.age)}</span>
+       <button class="pg-btn-rsi" style="margin-left:8px;font-size:9px;padding:3px 8px" onclick="clearLocalCache()">🔄 刷新</button>`;
+    return;
+  }
+
+  (document.getElementById('memberContent')||{}).innerHTML='<div class="spinner"></div>';
+  (document.getElementById('filterCount')||{}).textContent = '加载中...';
+  try{
+    const totalMembers = orgTotalMembers;
+    const totalPages = totalMembers > 0 ? Math.ceil(totalMembers / 32) : 15;
+
+    let all = [];
+    for(let p = 1; p <= totalPages; p++){
+      (document.getElementById('filterCount')||{}).textContent =
+        `已加载 ${all.length} / ${totalMembers} 人... (${p}/${totalPages} 页)`;
+      const batch = await fetchPageWithRetry(p);
+      // 不以 batch 长度判断终止，跑完所有按总人数算出的页数
+      all = all.concat(batch);
+      if(p < totalPages) await sleep(1500); // 最后一页不用等
+    }
+    // Pad with placeholder cards for private/hidden members
+    const hidden = orgTotalMembers - all.length;
+    if(hidden > 0){
+      for(let i = 0; i < hidden; i++){
+        all.push({ handle: '私密账号', display: '私密账号', image: '', rank: '—', stars: 0, roles: [], private: true });
+      }
+    }
+    memberCache['all'] = all;
+    saveToLocal(all);
+    (document.getElementById('sMembers')||{}).textContent = orgTotalMembers;
+    renderMembers(all);
+  } catch(e){
+    (document.getElementById('memberContent')||{}).innerHTML=
+      `<div style="color:var(--red);font-size:13px;padding:1rem;">
+        成员数据加载失败：${e.message}
+        <button class="pg-btn-rsi" style="margin-left:1rem;margin-top:0.5rem" onclick="clearLocalCache()">🔄 重试</button>
+      </div>`;
+  }
+}
+
+const PAGE_SIZE = 32;
+let viewPage = 1;
+
+function renderMembers(members){
+  const ranks = [...new Set(members.map(m=>m.rank).filter(Boolean))];
+  const rankSel = document.getElementById('filterRank');
+  const curRank = rankSel.value;
+  rankSel.innerHTML = '<option value="">全部职衔</option>' +
+    ranks.map(r=>`<option value="${r}"${r===curRank?'selected':''}>${r}</option>`).join('');
+  viewPage = 1;
+  applyFilter();
+}
+
+function applyFilter(){
+  const allCached = memberCache['all'] || [];
+  if(!allCached.length) return;
+
+  const search = document.getElementById('filterSearch').value.trim().toLowerCase();
+  const rank   = document.getElementById('filterRank').value;
+  const stars  = document.getElementById('filterStars').value;
+  const sort   = document.getElementById('sortBy').value;
+
+  let filtered = allCached.filter(m => {
+    const handle = (m.handle||'').toLowerCase();
+    const display = (m.display||'').toLowerCase();
+    if(search && !handle.includes(search) && !display.includes(search)) return false;
+    if(rank && m.rank !== rank) return false;
+    if(stars !== '' && (m.stars||0) !== parseInt(stars)) return false;
+    return true;
+  });
+
+  if(!sort || sort === 'stars-desc') filtered.sort((a,b)=>(b.stars||0)-(a.stars||0));
+  else if(sort === 'stars-asc') filtered.sort((a,b)=>(a.stars||0)-(b.stars||0));
+  else if(sort === 'name-asc') filtered.sort((a,b)=>(a.handle||'').localeCompare(b.handle||''));
+  else if(sort === 'name-desc') filtered.sort((a,b)=>(b.handle||'').localeCompare(a.handle||''));
+
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  if(viewPage > totalPages) viewPage = totalPages;
+
+  const start = (viewPage - 1) * PAGE_SIZE;
+  const slice = filtered.slice(start, start + PAGE_SIZE);
+
+  (document.getElementById('filterCount')||{}).textContent =
+    `${total} / ${allCached.length} 名成员`;
+
+  const el = document.getElementById('memberContent');
+  if(!slice.length){
+    el.innerHTML='<div style="color:var(--text-dim);font-size:13px;padding:1rem;">没有符合条件的成员</div>';
+    (document.getElementById('pagi')||{}).innerHTML='';
+    (document.getElementById('pgInfo')||{}).textContent='';
+    return;
+  }
+
+  el.innerHTML=`<div class="member-grid-rsi">${slice.map(m=>{
+    const init=(m.display||m.handle||'?').charAt(0).toUpperCase();
+    const av=m.image
+      ?`<img class="m-avatar-rsi" src="${m.image}" onerror="this.outerHTML='<div class=m-avatar-ph-rsi>${init}</div>'">`
+      :`<div class="m-avatar-ph-rsi">${init}</div>`;
+    const starsHtml=Array.from({length:5},(_,i)=>`<div class="m-star${i<(m.stars||0)?'':' dim'}"></div>`).join('');
+    const roles=(m.roles||[]).map(r=>`<span class="m-role">${r}</span>`).join('');
+    if(m.private){
+      return `<div class="member-card" style="opacity:0.35;border-style:dashed">
+        <div class="m-avatar-ph" style="color:var(--text-dim)">?</div>
+        <div class="m-handle" style="color:var(--text-dim)">私密账号</div>
+        <div class="m-rank">—</div>
+      </div>`;
+    }
+    return `<div class="member-card-rsi">
+      ${av}
+      <div class="m-handle-rsi">${m.handle||'Unknown'}</div>
+      <div class="m-rank-rsi">${m.rank||'Member'}</div>
+    </div>`;
+  }).join('')}</div>`;
+
+  buildPagi(viewPage, totalPages);
+  (document.getElementById('pgInfo')||{}).textContent =
+    `第 ${viewPage} / ${totalPages} 页 · ${start+1}–${Math.min(start+PAGE_SIZE,total)} / ${total} 人`;
+}
+
+function buildPagi(page, totalPages){
+  if(totalPages <= 1){
+    (document.getElementById('pagi')||{}).innerHTML='';
+    return;
+  }
+  const range = 2;
+  let btns = '';
+  for(let i = 1; i <= totalPages; i++){
+    if(i === 1 || i === totalPages || (i >= page-range && i <= page+range)){
+      btns += `<button class="pg-btn${i===page?' active':''}" onclick="goPage(${i})">${i}</button>`;
+    } else if(i === page-range-1 || i === page+range+1){
+      btns += `<span class="pg-btn-rsi" style="pointer-events:none;border:none;color:var(--text-dim)">…</span>`;
+    }
+  }
+  (document.getElementById('pagi')||{}).innerHTML=`
+    <button class="pg-btn-rsi" onclick="goPage(${page-1})" ${page<=1?'disabled':''}>◀</button>
+    ${btns}
+    <button class="pg-btn-rsi" onclick="goPage(${page+1})" ${page>=totalPages?'disabled':''}>▶</button>`;
+}
+
+function goPage(p){
+  viewPage = p;
+  applyFilter();
+  document.getElementById('members').scrollIntoView({behavior:'smooth'});
+}
+
+
+
+async function fetchNavStatus(){
+  const dot  = document.getElementById('serverDot');
+  const txt  = document.getElementById('serverTxt');
+  const ver  = document.getElementById('navVersion');
+  const nav  = document.getElementById('navStatus');
+  try{
+    // Fetch stats for version — use cache mode for reliability
+    const sr = await fetch(`https://api.starcitizen-api.com/${API_KEY}/v1/live/stats`);
+    const sd = (await sr.json())?.data;
+    ver.textContent = 'LiVE 4.8.0';
+    (document.getElementById('mobileVersion')||{}).textContent = 'LiVE 4.8.0';
+
+    // Ping org API to check server reachability
+    const controller = new AbortController();
+    const timer = setTimeout(()=>controller.abort(), 8000);
+    const pr = await fetch(`https://api.starcitizen-api.com/${API_KEY}/v1/cache/organization/${ORG_SID}`,{signal:controller.signal});
+    clearTimeout(timer);
+    const pd = await pr.json();
+    if(pd?.success){
+      dot.style.background='var(--green)';
+      txt.textContent='服务器正常';
+      nav.style.color='var(--green)';
+      (document.getElementById('mobileDot')||{}).style.background='var(--green)';
+      (document.getElementById('mobileTxt')||{}).textContent='服务器正常';
+      (document.getElementById('mobileTxt')||{}).style.color='var(--green)';
+    } else {
+      dot.style.background='var(--gold)';
+      txt.textContent='状态异常';
+      nav.style.color='var(--gold)';
+      (document.getElementById('mobileDot')||{}).style.background='var(--gold)';
+      (document.getElementById('mobileTxt')||{}).textContent='状态异常';
+      (document.getElementById('mobileTxt')||{}).style.color='var(--gold)';
+    }
+  } catch(e){
+    dot.style.background='var(--red)';
+    txt.textContent= e.name==='AbortError'?'连接超时':'服务器错误';
+    nav.style.color='var(--red)';
+  }
+}
+
+async function fetchAnnouncements(){
+  const GITHUB_USER = 'Aliww2468';
+  const GITHUB_REPO = 'org-1';
+  const LABEL = '公告';
+  try{
+    const r = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/issues?labels=${encodeURIComponent(LABEL)}&state=open&per_page=5`);
+    const issues = await r.json();
+    const el = document.getElementById('announceList');
+    const cnt = document.getElementById('announceCount');
+
+    if(!Array.isArray(issues) || issues.length === 0){
+      el.innerHTML = '<div class="announce-empty">暂无公告</div>';
+      cnt.textContent = '';
+      return;
+    }
+
+    cnt.textContent = issues.length + ' 条';
+    el.innerHTML = issues.map((issue, i) => {
+      const date = new Date(issue.created_at).toLocaleDateString('zh-CN');
+      const body = (issue.body || '').replace(/\r\n/g,'\n').trim();
+      const short = body.length > 100 ? body.slice(0,100)+'…' : body;
+      const labels = issue.labels
+        .filter(l => l.name !== '公告')
+        .map(l => `<span class="announce-label">${l.name}</span>`)
+        .join(' ');
+      return `<div class="announce-card" onclick="toggleAnnounce(this)">
+        ${labels ? `<div>${labels}</div>` : ''}
+        <div class="announce-card-top">
+          <div class="announce-card-title">${issue.title}</div>
+          <div class="announce-card-date">${date}</div>
+        </div>
+        <div class="announce-card-body" data-full="${encodeURIComponent(body)}" data-short="${encodeURIComponent(short)}">${short||'点击展开'}</div>
+      </div>`;
+    }).join('');
+  } catch(e){
+    (document.getElementById('announceList')||{}).innerHTML =
+      '<div class="announce-empty">公告加载失败</div>';
+  }
+}
+
+function toggleAnnounce(card){
+  const body = card.querySelector('.announce-card-body');
+  const isExpanded = body.classList.contains('expanded');
+  if(isExpanded){
+    body.classList.remove('expanded');
+    body.textContent = decodeURIComponent(body.dataset.short) || '点击展开';
+  } else {
+    body.classList.add('expanded');
+    body.textContent = decodeURIComponent(body.dataset.full) || '暂无内容';
+  }
+}
+
+
+function handleMenuClick(e){
+  // Close if clicking the backdrop (not on a link or status area)
+  if(e.target === document.getElementById('mobileMenu')){
+    closeMenu();
+  }
+}
+
+function toggleMenu(){
+  const hb = document.getElementById('hamburger');
+  const mm = document.getElementById('mobileMenu');
+  hb.classList.toggle('open');
+  mm.classList.toggle('open');
+}
+
+function closeMenu(){
+  document.getElementById('hamburger').classList.remove('open');
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.body.style.overflow = '';
+  // Sync active state in mobile menu
+  const pages = ['home','org','members','websites','join'];
+  document.querySelectorAll('.mobile-menu a').forEach((a,i)=>{
+    a.classList.toggle('active', document.getElementById(pages[i])?.classList.contains('active'));
+  });
+}
+
+async function init(){
+  (document.getElementById('loadSid')||{}).textContent = '···';
+  (document.getElementById('loadSub')||{}).textContent = `正在连接 RSI 网络，拉取 ${ORG_SID}...`;
+  fetchNavStatus(); // 提前并行拉取版本号和服务器状态
+  try{
+    const org = await apiGet(`organization/${ORG_SID}`);
+    renderOrg(org);
+    const ls = document.getElementById('loadScreen');
+    await sleep(500);
+    ls.classList.add('out');
+    // Fade in main content after loading screen starts fading
+    setTimeout(()=>{
+      ls.style.display='none';
+      document.querySelectorAll('nav, .page, footer').forEach(el=>{
+        el.style.opacity='0';
+        el.style.transition='opacity 0.8s ease';
+        requestAnimationFrame(()=>requestAnimationFrame(()=>{ el.style.opacity='1'; }));
+      });
+    }, 300);
+    loadMembers(1);
+    fetchNavStatus();
+    fetchAnnouncements();
+    setInterval(fetchNavStatus, 3 * 60 * 1000);
+  } catch(e){
+    console.error('init error:', e, e.stack);
+    (document.getElementById('loadScreen')||{style:{}}).style.display='none';
+    const fs2 = (document.getElementById('fatalScreen')||{style:{}});
+    (document.getElementById('fatalMsg')||{}).textContent =
+      `错误：${e.message} | ${(e.stack||'').split('\n')[1]||''}`;
+    if(fs2.style) fs2.style.display='flex';
+  }
+}
+
+init();
+function showMainPage(page){
+  var pages = ['home','org','members','websites','join'];
+  for(var i=0;i<pages.length;i++){
+    var d = document.getElementById('page-'+pages[i]);
+    if(d) d.style.display = (pages[i]===page) ? 'block' : 'none';
+  }
+  var navIds = {home:'navHome',org:'navOrg',members:'navMembers',websites:'navWebsites',join:'navJoin'};
+  Object.keys(navIds).forEach(function(k){ var e=document.getElementById(navIds[k]); if(e) e.classList.remove('active'); });
+  var an = navIds[page]; if(an){ var e=document.getElementById(an); if(e) e.classList.add('active'); }
+  document.documentElement.scrollTop=0; window.scrollTo(0,0);
+  if(page==='members' && !memberCache['all']) loadMembers(1);
+  if(page==='org') renderOrgPage();
+}
+
+function renderOrgPage(){
+  const d = window._orgData;
+  if(!d) return;
+  const bannerWrap = document.getElementById('orgBannerWrap');
+  if(bannerWrap && d.banner) bannerWrap.innerHTML = '<img src="'+d.banner+'" style="width:100%;max-height:220px;object-fit:cover;" onerror="this.remove()">';
+  const grid = document.getElementById('orgInfoGrid');
+  if(grid){
+    const ARCHETYPE2={Corporation:'企业',PMC:'私人军事',Faith:'信仰',Organization:'组织',Club:'俱乐部'};
+    const COMMITMENT2={Hardcore:'硬核',Regular:'常规',Casual:'休闲'};
+    const LANG2={English:'英语',Chinese:'中文',French:'法语',German:'德语',Spanish:'西班牙语'};
+    const FOCUS2={'Persistent Universe':'持续宇宙',Exploration:'探索',Freelancing:'自由佣兵',Trading:'贸易',Mining:'采矿','Bounty Hunting':'赏金猎人',Piracy:'海盗',Security:'安保',Military:'军事'};
+    const items=[
+      {l:'组织名称',v:d.name||'-'},{l:'SID',v:ORG_SID},{l:'类型',v:ARCHETYPE2[d.archetype]||d.archetype||'-'},
+      {l:'参与程度',v:COMMITMENT2[d.commitment]||d.commitment||'-'},{l:'语言',v:LANG2[d.lang]||d.lang||'-'},
+      {l:'成员数',v:(d.members||'-')+'人'},{l:'招募',v:d.recruiting?'开放中':'已关闭'},
+      {l:'角色扮演',v:d.roleplay?'是':'否'},
+    ];
+    if(d.focus?.primary?.name) items.push({l:'主要方向',v:FOCUS2[d.focus.primary.name]||d.focus.primary.name});
+    if(d.focus?.secondary?.name) items.push({l:'次要方向',v:FOCUS2[d.focus.secondary.name]||d.focus.secondary.name});
+    grid.innerHTML = items.map(function(c){
+      return '<div class="org-info-card"><div class="org-info-lbl">'+c.l+'</div><div class="org-info-val">'+c.v+'</div></div>';
+    }).join('');
+  }
+  const hbox = document.getElementById('orgHeadline');
+  if(hbox && d.headline?.plaintext){
+    hbox.textContent = d.headline.plaintext.trim();
+    hbox.style.display='block';
+  }
+}
+
+
+(function(){
   const wrap = document.querySelector('.card-grid-wrap');
   if(!wrap) return;
   const cards = [...document.querySelectorAll('.card')];
@@ -541,9 +1247,11 @@ footer{
       if(rel === 0){
         tx = dragX; sc = 1; op = 1; zi = 10; rot = dragX * 0.03;
       } else if(rel === 1){
-        tx = 58 - dragX * 0.12; sc = 0.88; op = 0.55; zi = 6; rot = 0;
+        const peek = window.innerWidth > 768 ? 120 : 58;
+        tx = peek - dragX * 0.12; sc = 0.88; op = 0.7; zi = 6; rot = 0;
       } else if(rel === N - 1){
-        tx = -58 - dragX * 0.12; sc = 0.88; op = 0.55; zi = 6; rot = 0;
+        const peek2 = window.innerWidth > 768 ? -120 : -58;
+        tx = peek2 - dragX * 0.12; sc = 0.88; op = 0.7; zi = 6; rot = 0;
       } else {
         tx = 0; sc = 0.76; op = 0; zi = 1; rot = 0;
       }
